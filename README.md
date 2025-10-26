@@ -22,4 +22,4 @@ This project explores creating EDK2/UEFI support for the **Redmi Note 7 Pro (cod
 ## Currently in need
 
 - of uefi img for redmi note 7 pro
-- made a uefi image but for now no gpio work 😔 i'll probe it more
+- made a uefi image but for now gpio work but no touch i'll probe it more
