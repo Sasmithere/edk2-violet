@@ -23,3 +23,4 @@ This project explores creating EDK2/UEFI support for the **Redmi Note 7 Pro (cod
 
 - of uefi img for redmi note 7 pro
 - made a uefi image but for now gpio work but no touch i'll probe it more
+- i2c bus for touch controller is not enabled, which usually sits on i2c-1 for this device
