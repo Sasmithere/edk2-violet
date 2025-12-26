@@ -1,0 +1,135 @@
+[Defines]
+  VENDOR_NAME                    = Xiaomi
+  PLATFORM_NAME                  = violet
+  PLATFORM_GUID                  = 28f1a3bf-193a-47e3-a7b9-5a435eaab2ee
+  PLATFORM_VERSION               = 0.1
+  DSC_SPECIFICATION              = 0x00010019
+  OUTPUT_DIRECTORY               = Build/$(PLATFORM_NAME)
+  SUPPORTED_ARCHITECTURES        = AARCH64
+  BUILD_TARGETS                  = DEBUG|RELEASE
+  SKUID_IDENTIFIER               = DEFAULT
+  FLASH_DEFINITION               = Platform/Qualcomm/sm6150/sm6150.fdf
+  DEVICE_DXE_FV_COMPONENTS       = Platform/Xiaomi/sm6150/violet.fdf.inc
+
+  # Enable A/B Slot Environment
+  AB_SLOTS_SUPPORT               = TRUE
+  USE_UART                       = 1
+
+!include Platform/Qualcomm/sm6150/sm6150.dsc
+
+  
+[LibraryClasses.common]
+  DALFwkLib|QcomPkg/Library/DALFwkLib/DALFwkLib.inf
+  SdccHalLib|QcomPkg/Library/SdccCommonLib/SdccHalLib/SdccHalLib.inf
+  SdccCommonLib|QcomPkg/Library/SdccCommonLib/SdccCommonLib.inf
+  UncachedMemoryAllocationLib|QcomPkg/Library/UncachedMemoryAllocationLib/UncachedMemoryAllocationLib.inf
+  RpmbLib|QcomPkg/Library/RpmbLib/RpmbLib.inf
+  RpmbListenerLib|QcomPkg/Library/RpmbLib/RpmbListenerLib.inf
+  UefiCfgLib|QcomPkg/Library/UefiConfigLib/UefiCfgLib.inf
+  BootConfigLib|QcomPkg/Library/NullLibs/BootConfigLibNull/BootConfigLibNull.inf
+  ShLib|QcomPkg/Library/ShLib/ShLib.inf
+  QcomLib|QcomPkg/Library/QcomLib/QcomLib.inf
+  QcomBaseLib|QcomPkg/Library/QcomBaseLib/QcomBaseLib.inf
+  GuidedFvLib|QcomPkg/Library/GuidedFvLib/GuidedFvLib.inf
+  CookieLib|QcomPkg/Library/CookieLib/CookieLib.inf
+  MountFvUtilsLib|QcomPkg/Library/MountFvUtilsLib/MountFvUtilsLib.inf
+  MountFvLib|QcomPkg/Library/MountFvLib/MountFvLib.inf
+  TzRuntimeLib|QcomPkg/Library/TzRuntimeLib/TzRuntimeLib.inf
+  ProcLib|QcomPkg/Library/ProcLib/ProcLib.inf
+  ParserLib|QcomPkg/Library/ParserLib/ParserLib.inf
+  PeHashLib|QcomPkg/Library/PeHashLib/PeHashLib.inf
+  SdccTargetLib|QcomPkg/SDM670Pkg/Library/SdccTargetLib/SdccCoreTargetLib.inf
+  BusyWaitLib|QcomPkg/Library/BusyWaitLib/BusyWaitLib.inf
+  SdccClockLib|QcomPkg/SDM670Pkg/Library/SdccClockLib/SdccCoreClockLib.inf
+  TimerSleepLib|QcomPkg/Library/TimerSleepLib/TimerSleepLib.inf
+
+[BuildOptions.common]
+  GCC:*_*_AARCH64_CC_FLAGS = -DSILICON_PLATFORM=6150 -Wno-address-of-packed-member
+
+
+[PcdsFixedAtBuild.common]
+  
+  gQcomTokenSpaceGuid.PcdMipiFrameBufferWidth|1080
+  gQcomTokenSpaceGuid.PcdMipiFrameBufferHeight|2340
+  
+  # Simple Init
+  gSimpleInitTokenSpaceGuid.PcdGuiDefaultDPI|400
+
+  gRenegadePkgTokenSpaceGuid.PcdDeviceVendor|"Xiaomi"
+  gRenegadePkgTokenSpaceGuid.PcdDeviceProduct|"Redmi Note 7 Pro"
+  gRenegadePkgTokenSpaceGuid.PcdDeviceCodeName|"violet" 
+ 
+
+  gQcomTokenSpaceGuid.PcdTouchCtlrAddress|0x62
+  gQcomTokenSpaceGuid.PcdTouchCtlrResetPin|88
+  gQcomTokenSpaceGuid.PcdTouchCtlrIntPin|89
+  gQcomTokenSpaceGuid.PcdTouchCtlrI2cDevice|1
+  gQcomTokenSpaceGuid.PcdTouchMinX|0
+  gQcomTokenSpaceGuid.PcdTouchMaxX|1080
+  gQcomTokenSpaceGuid.PcdTouchInvertedX|0
+  gQcomTokenSpaceGuid.PcdTouchMinY|0
+  gQcomTokenSpaceGuid.PcdTouchMaxY|2340
+  gQcomTokenSpaceGuid.PcdTouchInvertedY|0
+  gQcomTokenSpaceGuid.PcdTouchCtlrVddPin|0
+  gQcomTokenSpaceGuid.PcdTouchCtlrVddIoPin|0
+  gQcomTokenSpaceGuid.PcdTouchCtlrVddPinActiveLow|0
+  
+  gArmTokenSpaceGuid.PcdArmFreeUncachedMemorySizeThreshold|0
+  
+  gQcomTokenSpaceGuid.PcdDebugUartPortBase|0xa88000
+  
+  #gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
+  #gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x2F
+  
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSdMmcPciHostControllerMmioBase|0x007C0000
+  
+  #gEfiMdeModulePkgTokenSpaceGuid.PcdDxeNxMemoryProtectionPolicy|0x00000000
+  #gEfiMdeModulePkgTokenSpaceGuid.PcdImageProtectionPolicy|0x00000000
+  #gEfiMdeModulePkgTokenSpaceGuid.PcdNullPointerDetectionPropertyMask|0x00
+  #gEfiMdeModulePkgTokenSpaceGuid.PcdCpuStackGuard|FALSE
+  #gEfiMdeModulePkgTokenSpaceGuid.PcdHeapGuardPropertyMask|0x00
+
+
+
+# Produce the highest video mode in Shell and UiApp
+[PcdsDynamicDefault.common]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|0 # /8 = column
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|0 #/19 = row
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoHorizontalResolution|0
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoVerticalResolution|0
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupConOutRow|0
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupConOutColumn|0
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|0
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|0
+  
+ [Components.common]
+  #MdeModulePkg/Bus/I2c/I2cDxe/QupV3/QupV3I2cDxe.inf
+  
+  Silicon/Qualcomm/QcomPkg/Drivers/NovatekTouchDxe/NovatekNvtTsDevice.inf
+  Silicon/Qualcomm/QcomPkg/Drivers/NovatekTouchDxe/NovatekNvtTs.inf
+  #Platform/EFI_Binaries/Drivers/sm6150/SdccDxe/SdccDxe.inf
+  
+  EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
+  Platform/EFI_Binaries/Drivers/sm6150/MsmSdMmcDxe/MsmSdMmcDxe.inf
+  MdeModulePkg/Bus/Pci/SdMmcPciHcDxe/SdMmcPciHcDxe.inf
+  MdeModulePkg/Bus/Sd/SdDxe/SdDxe.inf
+  MdeModulePkg/Bus/Sd/EmmcDxe/EmmcDxe.inf
+  
+  #extras/QcomUsbSerialDxe/QcomUsbSerialDxe.inf
+  
+  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
+  MdeModulePkg/Universal/DebugPortDxe/DebugPortDxe.inf
+  MdeModulePkg/Universal/SerialDxe/SerialDxe.inf
+  #
+  # USB Peripheral Support
+  #
+  EmbeddedPkg/Drivers/AndroidFastbootTransportUsbDxe/FastbootTransportUsbDxe.inf
+
+  #
+  # Fastboot
+  #
+  EmbeddedPkg/Application/AndroidFastboot/AndroidFastbootApp.inf
+  
+
+
+  

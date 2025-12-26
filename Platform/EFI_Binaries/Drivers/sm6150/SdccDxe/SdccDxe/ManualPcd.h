@@ -1,0 +1,59 @@
+
+#ifndef __MANUAL_PCD_H__
+#define __MANUAL_PCD_H__
+
+// SDCC PCDs (Configured for Violet/SM6150)
+// SDC2 (SD Card) is typically Slot Index 1
+#define _PCD_GET_MODE_32_SDCCExtSlotNumber 1
+#define _PCD_VALUE_SDCCExtSlotNumber 1
+// SDC1 (eMMC) is typically Slot Index 0
+#define _PCD_GET_MODE_32_SDCCEmmcSlotNumber 0
+#define _PCD_VALUE_SDCCEmmcSlotNumber 0
+#define _PCD_VALUE_SDCCEventBasedSDDetectEnabled 1
+#define _PCD_GET_MODE_BOOL_SDCCEventBasedSDDetectEnabled 1
+#define _PCD_VALUE_SDCCEmmcHwResetEnabled 1
+#define _PCD_GET_MODE_BOOL_SDCCEmmcHwResetEnabled 1
+#define _PCD_VALUE_SDCCDmaEnabled 1
+#define _PCD_GET_MODE_BOOL_SDCCDmaEnabled 1
+#define _PCD_GET_MODE_32_SDCCMaxSlotNumber 2
+#define _PCD_VALUE_SDCCMaxSlotNumber 2
+#define _PCD_VALUE_SDCCSdhciEnable 1
+#define _PCD_GET_MODE_BOOL_SDCCSdhciEnable 1
+#define _PCD_GET_MODE_32_SDCCEmmcSpeedMode 2
+#define _PCD_VALUE_SDCCEmmcSpeedMode 2
+
+// Standard PCDs
+#define _PCD_GET_MODE_BOOL_PcdVerifyNodeInList 0
+#define _PCD_VALUE_PcdVerifyNodeInList 0
+#define _PCD_GET_MODE_32_PcdMaximumLinkedListLength 0
+#define _PCD_VALUE_PcdMaximumLinkedListLength 0
+#define _PCD_GET_MODE_32_PcdMaximumUnicodeStringLength 1000000
+#define _PCD_VALUE_PcdMaximumUnicodeStringLength 1000000
+#define _PCD_GET_MODE_32_PcdMaximumAsciiStringLength 1000000
+#define _PCD_VALUE_PcdMaximumAsciiStringLength 1000000
+#define _PCD_GET_MODE_32_PcdUefiLibMaxPrintBufferSize 320
+#define _PCD_VALUE_PcdUefiLibMaxPrintBufferSize 320
+#define _PCD_GET_MODE_BOOL_PcdUgaConsumeSupport 1
+#define _PCD_VALUE_PcdUgaConsumeSupport 1
+#define _PCD_GET_MODE_BOOL_PcdDriverDiagnosticsDisable 1
+#define _PCD_VALUE_PcdDriverDiagnosticsDisable 1
+#define _PCD_GET_MODE_BOOL_PcdComponentNameDisable 1
+#define _PCD_VALUE_PcdComponentNameDisable 1
+#define _PCD_GET_MODE_BOOL_PcdDriverDiagnostics2Disable 1
+#define _PCD_VALUE_PcdDriverDiagnostics2Disable 1
+#define _PCD_GET_MODE_BOOL_PcdComponentName2Disable 1
+#define _PCD_VALUE_PcdComponentName2Disable 1
+#define _PCD_GET_MODE_32_PcdMaximumDevicePathNodeCount 0
+#define _PCD_VALUE_PcdMaximumDevicePathNodeCount 0
+
+// Debug PCDs (for DebugLib)
+#define _PCD_GET_MODE_32_PcdFixedDebugPrintErrorLevel 0xFFFFFFFF
+#define _PCD_VALUE_PcdFixedDebugPrintErrorLevel 0xFFFFFFFF
+#define _PCD_GET_MODE_32_PcdDebugPrintErrorLevel 0x80000042
+#define _PCD_VALUE_PcdDebugPrintErrorLevel 0x80000042
+#define _PCD_GET_MODE_8_PcdDebugPropertyMask 0x2F
+#define _PCD_VALUE_PcdDebugPropertyMask 0x2F
+#define _PCD_GET_MODE_8_PcdDebugClearMemoryValue 0xAF
+#define _PCD_VALUE_PcdDebugClearMemoryValue 0xAF
+
+#endif

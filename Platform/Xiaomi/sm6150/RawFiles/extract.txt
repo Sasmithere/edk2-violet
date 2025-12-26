@@ -1,0 +1,52 @@
+[    0.573292] [NVT-ts] nvt_driver_init 2316: start
+[    0.573298] [NVT-ts] nvt_driver_init 2323: LCM is right! [Vendor]shenchao [IC] nt36672a
+[    0.586404] [NVT-ts] nvt_ts_probe 1541: start
+[    0.586411] [NVT-ts] nvt_parse_dt 784: novatek,irq-gpio=89
+[    0.700621] [NVT-ts] nvt_ts_check_chip_ver_trim 1183: buf[1]=0x0A, buf[2]=0x00, buf[3]=0x00, buf[4]=0x72, buf[5]=0x66, buf[6]=0x03
+[    0.700631] [NVT-ts] nvt_ts_check_chip_ver_trim 1209: This is NVT touch IC
+[    0.771633] [NVT-ts] nvt_read_pid 430: PID=5916
+[    0.772021] [NVT-ts] nvt_ts_probe 1699: int_trigger_type=1
+[    0.772255] [NVT-ts] nvt_ts_probe 1711: request irq 182 succeed
+[    0.772621] [NVT-ts] nvt_get_oem_data 607: ++
+[    0.850313] [NVT-ts] Init_BootLoader 345: Init OK 
+[    0.920070] [NVT-ts] Resume_PD 188: Resume PD OK
+[    1.060428] [NVT-ts] nvt_get_oem_data 714: --
+[    1.060438] [NVT-ts] nvt_get_xiaomi_lockdown_info 731: The maker of Touch Panel & CG Lamination: 0xFF
+[    1.060444] [NVT-ts] nvt_get_xiaomi_lockdown_info 733: Display maker: 0xFF
+[    1.060450] [NVT-ts] nvt_get_xiaomi_lockdown_info 735: CG ink color: 0xFF
+[    1.060456] [NVT-ts] nvt_get_xiaomi_lockdown_info 737: HW version: 0xFF
+[    1.060461] [NVT-ts] nvt_get_xiaomi_lockdown_info 739: Project ID: 0x00FF
+[    1.060467] [NVT-ts] nvt_get_xiaomi_lockdown_info 741: CG maker: 0xFF
+[    1.060473] [NVT-ts] nvt_get_xiaomi_lockdown_info 743: Reservation byte: 0xFF
+[    1.060479] [NVT-ts] lct_nvt_tp_info_node_init (line 759): LCM information : nt36672a video mode dsi shenchao panel
+[    1.060530] [NVT-ts] nvt_flash_proc_init 646: Succeeded!
+[    1.060536] [NVT-ts] nvt_flash_proc_init 649: ============================================================
+[    1.060541] [NVT-ts] nvt_flash_proc_init 650: Create /proc/NVTflash
+[    1.060547] [NVT-ts] nvt_flash_proc_init 651: ============================================================
+[    1.060555] [NVT-ts] nvt_extra_proc_init 800: create proc/nvt_fw_version Succeeded!
+[    1.060564] [NVT-ts] nvt_extra_proc_init 808: create proc/nvt_baseline Succeeded!
+[    1.060571] [NVT-ts] nvt_extra_proc_init 816: create proc/nvt_raw Succeeded!
+[    1.060581] [NVT-ts] nvt_extra_proc_init 824: create proc/nvt_diff Succeeded!
+[    1.060610] [NVT-ts] nvt_mp_proc_init 2068: create /proc/nvt_selftest Succeeded!
+[    1.060644] [NVT-ts] nvt_init_touchmode_data 1302: ENTER
+[    1.060652] [NVT-ts] nvt_init_touchmode_data 1352: mode:0, set cur:0, get cur:0, def:0 min:0 max:1
+[    1.060658] [NVT-ts] nvt_init_touchmode_data 1352: mode:1, set cur:0, get cur:0, def:1 min:0 max:1
+[    1.060665] [NVT-ts] nvt_init_touchmode_data 1352: mode:2, set cur:0, get cur:0, def:0 min:35 max:50
+[    1.060671] [NVT-ts] nvt_init_touchmode_data 1352: mode:3, set cur:0, get cur:0, def:112 min:64 max:255
+[    1.060678] [NVT-ts] nvt_init_touchmode_data 1352: mode:4, set cur:0, get cur:0, def:0 min:0 max:0
+[    1.060684] [NVT-ts] nvt_init_touchmode_data 1352: mode:5, set cur:0, get cur:0, def:0 min:0 max:0
+[    1.060690] [NVT-ts] nvt_init_touchmode_data 1352: mode:6, set cur:0, get cur:0, def:0 min:0 max:0
+[    1.060696] [NVT-ts] nvt_init_touchmode_data 1352: mode:7, set cur:2, get cur:2, def:2 min:0 max:3
+[    1.060702] [NVT-ts] nvt_init_touchmode_data 1352: mode:8, set cur:0, get cur:0, def:0 min:0 max:3
+[    1.060708] [NVT-ts] nvt_init_touchmode_data 1352: mode:9, set cur:0, get cur:0, def:0 min:0 max:0
+[    1.060720] [NVT-ts] nvt_ts_probe 1833: end
+[   13.600224] [NVT-ts] nvt_ts_resume 1996: Touch is already resume
+[   15.201125] [NVT-ts] Boot_Update_Firmware (line 1047): g_lcd_id = nt36672a video mode dsi shenchao panel
+[   15.201130] [NVT-ts] update_firmware_request 54: filename is 
+[   15.201139] [NVT-ts] update_firmware_request 58: firmware load failed, ret=-22
+[   15.201142] [NVT-ts] Boot_Update_Firmware 1068: update_firmware_request failed. (-22)
+[   15.458114] [NVT-ts] nvt_gesture_switch 147: choose the gesture mode yes or not
+[   15.458132] [NVT-ts] nvt_gesture_switch 149: disable gesture mode
+[   18.269299] [NVT-ts] lct_tp_set_screen_angle_callback 2137: tp is suspended or flashing, can not to set
+[   30.127243] [NVT-ts] nvt_ts_suspend 1925: start
+[   30.190164] [NVT-ts] nvt_ts_suspend 1981: end

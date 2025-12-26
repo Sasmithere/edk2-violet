@@ -1,0 +1,714 @@
+.text
+`.data
+.reloc
+*!P9J
+RBx&
+@qx3
+RBx&
+@qx3
+2(3A
+2(3A
+2H3A
+2H3A
+*l1A
+2C0A
+RBx&
+RBx&
+RBx&
+2	3A
+RBx&
+2)3A
+RBx&
+**3A
+2)3A
+RBx&
+**3A
+RBx&
+2	3A
+RBx&
+RBx&
+2J3A
+RBx&
+2!@6
+9i"B
+RBL;
+RBL;
+9K1A
+RBx&
+@q73
+2,.@
+R	1A
+*(-@
+*	1A
+(6($A
+_8(hi8
+T.<C
+RBL%
+RBL%
+RBL5
+RBd6
+RBD7
+RB$:
+RB(;
+RBL>
+?! k
+*A}@
+r	Y`
+*+AB
+*(AB
+r	Y`
+r	Y`
+ih8hm
+@9.e
+*	Y`
+@9-m
+q(Y`
+S+yj
+q(Y`
+2	Y`
+R	Y`
+R	Y`
+(}@y
+k0A@
+r	Y`
+)CL9
+R" L9,
+!L9MU
+h"L9		
+h"L9
+@yfN
+@ygR
+Tib@
+(aC9
+)aC9
+)aC9
+Tij@
+4*)@
+Tk&C9
+j"C9w
+x"C9
+I"86
+<I 8
+4k&@
+?@9P
+7@9E
+5a"C9
+7@9I
+#A9j>
+4a>@
+'A9Q
+	<B9
+DB9I
+hB9b
+lB9%D
+B9&(
+B9( 
+ C9#
+$C9$
+(C9%|
+,C9&x
+4C9't
+8C9(p
+9	<C9)l
+@C9*h
+DC9+d
+HC9,`
+PC9-
+tC91@
+xC9"<
+|C9#8
+C9$4
+C9%,
+9	h@9)
+x@9*
+@yoF
+RB9ov
+B9e\
+	QB9_
+@9j<
+&C9d
+*C9e
+9lZ@9
+*C9J
+&C9$
+4x.@
+kZ@9
+Z@9_
+*aC9
+3@9_
+'@9k
+kd	BzA
+*j*@y
+Tjz@
+Thz@
+Tiz@
+Tlz@
+4ub@
+Tm*@y
+J|	Sj*
+k@9$
+4	(@y(=
+@9	}
+@9	}
+ @9* 
+/@y?	
+;@9_
+@9(]
+y-%@8m
+yB%@8"
+#@9h
+@9(8
+,@9.D
+rsi)
+R)Q:
+r*ik
+	MA8
+	@9i=
+(MA8*
+@9/	@9-
+9@9	
+	@9l
+@9,>
+A)dB
+r*i(8
+9A)K
+(MA8*
+@9+	@9)
+BM@8M
+@9N	@9O
+ 7*$
+(2A)
+-.@)m}`
+j4@)%!
+6)D@
+e	@9
+@9m	@9c
+M@8o
+3A|`
+d%@9
+m5@9
+@9d	@9f
+@9k!
+@9o	@9a
+@9k	
+jh8h
+@9"]
+@9c]
+)k{8
+@9d\
+@9@\
+*@9%=
+.@9c
+aP9h
+aP9h
+aP9h
+aP9h
+aP9h
+hzixH
+hz)x)
+r	3A
+jj 8
+jj 8
+ij 8
+RBd'
+RBT*
+` Dz
+RB`,
+RB0/
+RK)D
+@9ibA9
+@9?5
+	ha8
+ASSERT_EFI_ERROR (Status = %r)
+DriverEntryPoint.c
+!EFI_ERROR (Status)
+SdccDxe
+AutoGen.c
+SDCC driver returns ERR_UNKNOWN
+SDCC driver returns ERR_CMD_TIMEOUT
+SDCC driver returns ERR_TIMEOUT
+SDCC driver returns ERR_CMD_CRC_FAIL
+SDCC driver returns ERR_DATA_CRC_FAIL
+SDCC driver returns ERR_CMD_SENT
+SDCC driver returns ERR_PROG_DONE
+SDCC driver returns ERR_CARD_READY
+SDCC driver returns ERR_INVALID_TX_STATE
+SDCC driver returns ERR_SET_BLKSZ
+SDCC driver returns ERR_SDIO_R5_RESP
+SDCC driver returns ERR_DMA
+SDCC driver returns ERR_READ_FIFO
+SDCC driver returns ERR_WRITE_FIFO
+SDCC driver returns ERR_ERAE
+SDCC driver returns ERR_SDIO
+SDCC driver returns ERR_SDIO_READ
+SDCC driver returns ERR_SDIO_WRITE
+SDCC driver returns ERR_SWITCH
+SDCC driver returns ERR_INVALID_PARAM
+SDCC driver returns ERR_CARD_UNDETECTED
+SDCC driver returns ERR_FEATURE_UNSUPPORTED
+SDCC driver returns ERR_SECTURE_COMMAND_IN_PROGRESS
+SDCC driver returns ERR_CMD_NOT_ALLOWED
+SDCC driver returns ERR_READ_SEC_CMD
+SDCC driver returns ERR_CARD_INIT
+SDCC driver returns ERR_CARD_REMOVED
+SDCC driver returns ERR_PWR_ON_WRITE_PROTECT 
+SDCC driver returns ERR_WP_VIOLATION
+SDCC driver returns ERR_SPS_MODE
+SDCC driver returns error that can not be decoded.
+SdccDxe.c
+CR has Bad Signature
+Get Card Info FAILED. %x
+Write Protect:: Invalid Parameter. %x
+Failed to write protect. Sector = %x. Error = %x
+Failed to write protect Sector = %x. Error = %x
+Emmc Erase: Invalid Parameter. SectorStart = 0x%xCount = 0x%x, handle = 0x%x
+Failed to Erase. SectorStart = 0x%x. Count = 0x%x. Error = 0x%x
+Get Card Info FAILED. %x
+Emmc Secure Erase:: Invalid Parameter. SectorStart = 0x%xCount = 0x%x, handle = 0x%x
+Failed to Secure Erase. SectorStart = 0x%x. Count = 0x%x. Error = 0x%x
+!EFI_ERROR (status)
+Card Detection FAILED! Handle %x, Slot %x
+Get Card Info FAILED! Status %x. Slot %x
+Failed to enable Hw Reset 
+Failed to initialize RPMB Listener, Status 0x%08x
+Failed to initialize GPT Listener, Status 0x%08x
+Failed to initialize Partition config, Status 0x%08x
+Failed to allocate memory for RPMB listener
+Failed to allocate memory for GPT listener
+nRH}
+	WZ@
+Blkio2: TRANSFER_DONE when queue is empty or transfer not started!
+SdccBlockIO2.c
+((BOOLEAN)(0==1))
+Blkio2: Warning transfer started but DEVICE_IDLE
+UNKNOWN_STATE!
+MemoryAllocationLib.c
+Pages != 0
+(Alignment & (Alignment - 1)) == 0
+RealPages > Pages
+Buffer != ((void *) 0)
+AllocationSize <= (0xFFFFFFFFFFFFFFFFULL - (UINTN) Buffer + 1)
+ERROR: Failed to Get Shared Imem Boot Device type 
+SharedIMEMBaseAddr
+OverRideSharedImemBootCfg
+UEFI Config Lib
+DebugLib.c
+Format != ((void *) 0)
+ASSERT %a +%d: %a
+ZeroMemWrapper.c
+Length <= (0xFFFFFFFFFFFFFFFFULL - (UINTN)Buffer + 1)
+SetMemWrapper.c
+(Length - 1) <= (0xFFFFFFFFFFFFFFFFULL - (UINTN)Buffer)
+CopyMemWrapper.c
+(Length - 1) <= (0xFFFFFFFFFFFFFFFFULL - (UINTN)DestinationBuffer)
+(Length - 1) <= (0xFFFFFFFFFFFFFFFFULL - (UINTN)SourceBuffer)
+String.c
+Destination != ((void *) 0)
+((UINTN) Destination & 0x00000001) == 0
+Source != Destination
+(UINTN) ( (Destination + Length + 1) < Source )
+(UINTN) ( (Source + Length + 1) < Destination )
+(UINTN) ( (Destination + Length) < Source)
+(UINTN) ( (Source + StrLen(Source)) < Destination )
+Length <= _gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength
+String != ((void *) 0)
+((UINTN) String & 0x00000001) == 0
+Length < _gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength
+StrSize (FirstString) != 0
+StrSize (SecondString) != 0
+StrSize (Destination) != 0
+StrSize (String) != 0
+StrSize (SearchString) != 0
+StrSize (Source) != 0
+(UINTN) ((CHAR8*) Source != (CHAR8*) Destination)
+(UINTN) ( (Destination + Length + 1) < ( (CHAR8*)Source ) )
+(UINTN) ( (CHAR8*) (Source + Length + 1) < Destination )
+*Source < 0x100
+AsciiStrSize (ReturnValue) != 0
+(UINTN) ( (Destination + Length) < Source )
+(UINTN) ( (Source + Length) < Destination )
+Length <= _gPcd_FixedAtBuild_PcdMaximumAsciiStringLength
+Length < _gPcd_FixedAtBuild_PcdMaximumAsciiStringLength
+AsciiStrSize (FirstString)
+AsciiStrSize (SecondString)
+AsciiStrSize (Destination) != 0
+AsciiStrSize (String) != 0
+AsciiStrSize (SearchString) != 0
+AsciiStrSize (Source) != 0
+(UINTN) ((CHAR8 *) Destination - Source) > AsciiStrLen (Source)
+(UINTN) (Source - (CHAR8 *) Destination) >= (AsciiStrSize (Source) * sizeof (CHAR16))
+StrSize (ReturnValue) != 0
+Value < 100
+Value < 0xa0
+(Value & 0xf) < 0xa
+SafeString.c
+((UINTN) Source & 0x00000001) == 0
+(Destination != ((void *) 0))
+(Source != ((void *) 0))
+(DestMax <= (_gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength))
+(DestMax != 0)
+(DestMax > SourceLen)
+InternalSafeStringNoStrOverlap (Destination, DestMax, (CHAR16 *)Source, SourceLen + 1)
+(Length <= (_gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength))
+(CopyLen != 0)
+(CopyLen > SourceLen)
+(String != ((void *) 0))
+(Data != ((void *) 0))
+(StrnLenS (String, (_gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength) + 1) <= (_gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength))
+(Address != ((void *) 0))
+AddressIndex + 1 < (sizeof (Address->Addr) / sizeof ((Address->Addr)[0]))
+(Guid != ((void *) 0))
+(Buffer != ((void *) 0))
+((Length & 0x00000001) == 0)
+(MaxBufferSize >= Length / 2)
+(DestMax <= (_gPcd_FixedAtBuild_PcdMaximumAsciiStringLength))
+InternalSafeStringNoAsciiStrOverlap (Destination, DestMax, (CHAR8 *)Source, SourceLen + 1)
+(Length <= (_gPcd_FixedAtBuild_PcdMaximumAsciiStringLength))
+(AsciiStrnLenS (String, (_gPcd_FixedAtBuild_PcdMaximumAsciiStringLength) + 1) <= (_gPcd_FixedAtBuild_PcdMaximumAsciiStringLength))
+!InternalSafeStringIsOverlap (Destination, DestMax, (void *)Source, (SourceLen + 1) * sizeof(CHAR16))
+(DestinationLength != ((void *) 0))
+!InternalSafeStringIsOverlap (Destination, DestMax * sizeof(CHAR16), (void *)Source, SourceLen + 1)
+UefiBootServicesTableLib.c
+gImageHandle != ((void *) 0)
+gST != ((void *) 0)
+gBS != ((void *) 0)
+UefiRuntimeServicesTableLib.c
+gRT != ((void *) 0)
+UefiLib.c
+TableGuid != ((void *) 0)
+Table != ((void *) 0)
+ProtocolGuid != ((void *) 0)
+NotifyFunction != ((void *) 0)
+Registration != ((void *) 0)
+Name != ((void *) 0)
+NotifyTpl <= 31
+Lock != ((void *) 0)
+Priority <= 31
+Lock->Lock == EfiLockReleased
+Lock->Lock != EfiLockUninitialized
+Lock->Lock == EfiLockAcquired
+Guid != ((void *) 0)
+Name != ((void *) 0) && Guid != ((void *) 0) && Value != ((void *) 0)
+*Value != ((void *) 0)
+SupportedLanguages != ((void *) 0)
+DxeServicesTableLib.c
+gDS != ((void *) 0)
+RuntimeLib.c
+ReportStatusCodeLib.c
+PostCode != ((void *) 0)
+Data != ((void *) 0)
+Filename != ((void *) 0)
+Description != ((void *) 0)
+LineNumber != ((void *) 0)
+ErrorLevel != ((void *) 0)
+Marker != ((void *) 0)
+DevicePath != ((void *) 0)
+ExtendedData != ((void *) 0)
+ExtendedDataSize != 0
+!((ExtendedData == ((void *) 0)) && (ExtendedDataSize != 0))
+!((ExtendedData != ((void *) 0)) && (ExtendedDataSize == 0))
+HobLib.c
+mHobList != ((void *) 0)
+HobStart != ((void *) 0)
+ArmArchTimerLib.c
+(_gPcd_FixedAtBuild_PcdArmArchTimerFreqInHz/1000000U)
+ArmGenericTimerGetTimerFreq () != 0
+ARM Architectural Timer is not available in the CPU, hence this library cannot be used.
+ProvisionRpmbTestKey: UncachedAllocateZeroPool failed!
+ProvisionRpmbTestKey: Failed to find ScmProtocol!!Status = (0x%x)
+ConfigRpmbStorPartitions: Failed to find RPMB Protocol
+ConfigRpmbStorPartitions: OpenParser failed
+ConfigGptStorPartitions: OpenParser failed
+ConfigStorPartitions: OpenParser failed
+VersionNum
+ConfigStorPartitions: Config file version mismatch
+Failed to load partiapp.cfg!Status = (0x%x)
+Locate RPMB Protocol failed, status = 0x%x
+RPMB not provisioned
+RPMB ReadCounterPkt failed, Result = %d
+Cannot read the data: RPMB is not provisioned, status = 0x%x
+RPMBProvisioned failed, status 0x%x
+RPMBCreateReadPacket failed, status = 0x%x
+AllocateZeroPool failed
+RPMBReadBlocks Failed, status = 0x%x
+RPMB.128KB
+RPMB.256KB
+RPMB.512KB
+RPMB.1MB
+Version
+DevId
+PartitionGuid
+AppNameId
+AppPartitionId
+SizeInSectors
+SizeInBytes
+Invalid Drive Number: %d
+Failed to initialize drive number %d
+sdcc_handle_open: can't get slot handle
+Failed to initialize the card.
+Failed to get memory card info.
+Invalid SDCC handle
+Invalid drive number %d
+Passed in NULL sdcc_pmem_info pointer
+SDCC GetDeviceInfo raw data:: Invalid SDCC handles 0x%x
+Get eMMC Raw Data:: emmc_info_raw is NULL
+Get eMMC Raw Data:: buff_len = %d is too small
+Get eMMC Raw Data:: Invalid drive number %d
+Get eMMC Raw Data:: can't get slot handle
+Get eMMC Raw Data:: eMMC not intialized
+Invalid SDCC handle 0x%x
+Slot %d state changed
+Operation not supported on SDIO card
+Invalid config info pointer
+sdcc_poll_card_status: can't get slot handle
+Erase not supported for the inserted card
+sdcc_erase failed
+failed to select the requested partition number %d
+sdcc_secure_erase failed %d
+ Sanitize failed with error %d
+Function not supported by inserted card
+Failed in changing bus width %d
+Write protect feature not supported in driveno %d
+Write protect not supported in driveno %d
+Failed %d in switching to 0x%x
+Error reset tuning block:error code %d
+No tuning point found
+Partition not supported
+Failed to set EMMC partition %d access, rc %d
+Partition is not supported
+RPMB is not supported
+Invalid partition number %d
+Failed to clear the PARTITION_ACCESS bits, rc %d
+Failed to set boot partition enable value %d, rc %d
+Device already programmed with partition information
+Failed to set GPP partition size, partition %d, rc %d
+Failed to set ENH area start address, rc %d
+Failed to set partition completition flag, rc %d
+Failed to get card status
+eMMC is not ready
+Switch error occurs
+Invalid boot partition enable value 0x%x
+Invalid number of blocks for enabling power-on WP
+Use of user power-on WP has been disabled
+User permanent WP has been enabled
+Failed in enabling user power-on write protect %d
+Write protect group size is 0
+CMD28 failed %d
+CMD28 response with address out of range
+CMD28 failed with address 0x%x
+Address out of range
+Boot permanent WP has been enabled
+Failed in enabling boot power-on write protect %d
+SDCC Client handle list is full
+sdcc_register_client_handle: can't get slot handle
+Handle already de-registered
+sdcc_init_sdhci_mode: can't get slot handle
+sdcc_hc_set_clock: Invalid Drive Number:%d
+SDCC: DATA ADMA ERROR %d
+sdcc_sdhci_check_transfer_status: rc is NULL 
+sdcc_hc_set_power_mode: can't get slot handle
+sdcc_get_device_status_sdhci_mode: rc is NULL 
+rpmb_read_counter_pkt: Invalid Parameter. 
+rpmb_read_counter_pkt: Unknown Card Type 
+rpmb_read_counter_pkt: Failed to switch to RPMB partition 
+rpmb_read_counter_pkt: Set Block Count failed
+rpmb_read_counter_pkt: sdcc_rpmb_do_transfer write failed
+rpmb_read_counter_pkt: sdcc_rpmb_do_transfer read failed
+rpmb_read_counter: Bad Response field = 0x%x 
+rpmb_read_counter_pkt: Bad Result field = 0x%x 
+rpmb_read_sectors: Invalid Handle
+rpmb_read_sectors: Unknown Card Type 
+rpmb_read_sectors: Failed to switch to RPMP partition 
+rpmb_read_sectors: sdcc_rpmb_do_transfer write failed 
+rpmb_read_sectors: Set Block Count failed 
+rpmb_read_sectors: sdcc_rpmb_do_transfer read failed 
+rpmb_write_sectors: Invalid Handle
+rpmb_write_sectors: Unknown Card Type 
+rpmb_write_sectors: Failed to switch to RPMB partition 
+rpmb_write_sectors: failed sdcc_rpmb_do_transfer write 
+rpmb_write_sectors: Set Block Count failed 
+rpmb_write_sectors: failed sdcc_rpmb_do_transfer read 
+Invalid Drive Number:%d
+SDCC failed to configure bus width %d in SDHCi mode
+Invalid NULL handle
+Set partition region not supported on card type %d
+sdcc_handle_optimized_open: can't get slot handle
+sdcc_partial_init: can't get slot handle
+sdcc_config_clk: WARNING!! SDCC mclk exceeds max supported clock.
+Lower SDCC mclk to max supported clock: %d 
+Failed in switching to high speed func
+Switch: High speed func is busy
+GPTListener.c
+GPTListenerAllocMem: Failed memory allocation
+GPTListenerInit: GPTListenerParams is NULL
+GPTListenerReadSectors: Failed mem allocation. mTzSDGptRWReq
+GPTListenerWriteSectors: Failed mem allocation. mTzSDGptRWReq
+RpmbListener.c
+RPMBListenerAllocMem: Failed memory allocation
+RPMBListenerInit: RPMBListenerParams is NULL
+RPMBListenerReadSectors: BufferPtr is NULL
+RPMBListenerReadSectors: Failed mem allocation.
+RPMBListenerWriteSectors: BufferPtr is NULL
+RPMBListenerWriteSectors: Failed mem allocation.
+0123456789ABCDEFSuccess
+Warning Unknown Glyph
+Warning Delete Failure
+Warning Write Failure
+Warning Buffer Too Small
+Warning Stale Data
+Load Error
+Invalid Parameter
+Unsupported
+Bad Buffer Size
+Buffer Too Small
+Not Ready
+Device Error
+Write Protected
+Out of Resources
+Volume Corrupt
+Volume Full
+No Media
+Media changed
+Not Found
+Access Denied
+No Response
+No mapping
+Time out
+Not started
+Already started
+Aborted
+ICMP Error
+TFTP Error
+Protocol Error
+Incompatible Version
+Security Violation
+CRC Error
+End of Media
+Reserved (29)
+Reserved (30)
+End of File
+Invalid Language
+Compromised Data
+PrintLibInternal.c
+Width < 38
+(Flags & ~(0x01 | 0x08 | 0x20 | 0x80)) == 0
+((Flags & 0x08) == 0) || ((Flags & 0x80) == 0)
+(BufferSize <= (_gPcd_FixedAtBuild_PcdMaximumAsciiStringLength))
+(BufferSize <= (_gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength) * sizeof (CHAR16) + 1)
+((Flags & ~(0x01 | 0x08 | 0x20 | 0x80)) == 0)
+(((Flags & 0x08) == 0) || ((Flags & 0x80) == 0))
+(Width < 38)
+(BufferSize >= (Width + 1) * Increment)
+(Format != ((void *) 0))
+(BufferSize <= (_gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength))
+(StrnLenS ((CHAR16 *)Format, (_gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength) + 1) <= (_gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength))
+(AsciiStrnLenS (Format, (_gPcd_FixedAtBuild_PcdMaximumAsciiStringLength) + 1) <= (_gPcd_FixedAtBuild_PcdMaximumAsciiStringLength))
+<null string>
+<null guid>
+%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x
+<null time>
+%02d/%02d/%04d  %02d:%02d
+%08X
+SerialPort Lib
+SdccCoreClockLib.c
+!EFI_ERROR (eResult)
+gcc_sdcc1_apps_clk
+gcc_sdcc1_ahb_clk
+gcc_sdcc2_apps_clk
+gcc_sdcc2_ahb_clk
+UNKNOWN
+CDP (SURF)
+FLUID
+FUSION
+MTP_MDM
+LiQUID
+DragonBoard
+RUMI
+VIRTIO
+GOBI
+QcomLib.c
+Key != ((void *) 0)
+EnableLogFsSyncInRetail
+%d.%d
+Qualcomm Snapdragon 
+Qualcomm Snapdragon xxxxxxx
+ERROR: Memory Allocation failed !
+Unable to delete file
+Invalid parameters passed to GetUUID
+LocateProtocol: ChipInfo unsuccessful! status: %d
+Failed to get MSM serial number
+LocateProtocol: EfiHash2Protocol unsuccessful! status: %d
+GetHashSize unsuccessful! status: %d
+GetHashSize: DigestSize is not an expected value!
+HashInit unsuccessful! status: %d
+HashUpdate unsuccessful! status: %d
+HashFinal unsuccessful! status: %d
+Failed to get BlkIo handles
+Failed to get Card Info! status: %d
+ERROR: Could not allocate space for dump buffer
+WARNING: Could not find protocol to dump buffer
+ERROR: Failed to get debug log. Status = 0x%08x
+TZApp Log Buffer: (Size = %d)
+-- START -- 
+-- DONE -- 
+ReadKeyInternal: gEfiSimpleTextInputExProtocolGuid handles = %d
+ReadKeyInternal: Read KEY = 0x%x
+IoLibArm.c
+(Address & 1) == 0
+(Address & 3) == 0
+(Address & 7) == 0
+MemLibGuid.c
+DestinationGuid != ((void *) 0)
+SourceGuid != ((void *) 0)
+Guid1 != ((void *) 0)
+Guid2 != ((void *) 0)
+((UINTN)Buffer & (sizeof (Guid->Data1) - 1)) == 0
+(Length & (sizeof (*GuidPtr) - 1)) == 0
+CompareMemWrapper.c
+DestinationBuffer != ((void *) 0)
+SourceBuffer != ((void *) 0)
+DivU64x32Remainder.c
+Divisor != 0
+LinkedList.c
+List != ((void *) 0)
+List->ForwardLink != ((void *) 0)
+List->BackLink != ((void *) 0)
+InternalBaseLibIsListValid (FirstEntry)
+SecondEntry != ((void *) 0)
+ListHead != ((void *) 0)
+((BOOLEAN)(0==1)) == IsNodeInList ((ListHead), (Entry))
+InternalBaseLibIsListValid (ListHead)
+InternalBaseLibIsListValid (List)
+((BOOLEAN)(1==1)) == IsNodeInList ((List), (Node))
+((BOOLEAN)(1==1)) == IsNodeInList ((FirstEntry), (SecondEntry))
+!IsListEmpty (Entry)
+Unaligned.c
+DevicePathUtilities.c
+Node != ((void *) 0)
+(Length >= sizeof (EFI_DEVICE_PATH_PROTOCOL)) && (Length < 0x00010000)
+Size != ((void *) 0)
+B?S4
+nRH}
+	WZ@
+nW	?m
+ir;a
+p^fM
+2(/-
+ir;r${
+nW	?m
+gul+A
+ir;E\z
+Y#mf
+sdio
+sdcc
+sdcc
+sdcc
+sdcc
+sdcc
+sdcc
+sdcc
+sdcc
+emmc
+sdcc
+NB10
+/home/work/violet-q-stable-build/vendor/qcom/non-hlos-2019-spf10/BOOT.XF.3.1/boot_images/Build/SDM6150LA_Core/RELEASE_CLANG40LINUX/AARCH64/QcomPkg/Drivers/SdccDxe/SdccDxe/DEBUG/SdccDxe.dll

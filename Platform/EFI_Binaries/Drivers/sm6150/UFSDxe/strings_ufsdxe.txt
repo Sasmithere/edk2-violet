@@ -1,0 +1,618 @@
+.text
+`.data
+.reloc
+2(sA
+2(sA
+2HsA
+2HsA
+C90	
+9ML@xp
+@yn<
+Tfym
++@9m
++	)u
+2,-A
+2K(@
+rh.@
+*irA
+*lqA
+2`$@
+T6	@
+2..@
+9*qA
+9i"B
+R	qA
+r@%@
+2(-@
+R	qA
+r@%@
+*(-@
+*lqA
+(6($A
+_8(hi8
+T.<C
+RB$,
+RB(.
+RBp1
+RBt2
+?! k
+RBp6
+RBd7
+RB<8
+ 7*$
+(2A)
+-.@)m}`
+j4@)%!
+6)D@
+e	@9
+@9m	@9c
+M@8o
+3A|`
+d%@9
+m5@9
+@9d	@9f
+@9k!
+@9o	@9a
+@9k	
+@9l!
+	*m#
+*A}@
+T_,@
+2	"@
+9/)C
+R"`Y9,
+aY9MU
+hbY9		
+hbY9
+@9M	@9N
+/E8B
+	!@9?
+	!@9?
+h"@9
+	(@9?
+	 @9?
+(@9_
+	 @9?
+(@9_
+*a@9
+h&@9h
+j&@9
+2n*@9
+2n*@9
+2q*@9
+h*@9
+@9(a
+@9(a
+j*@9
+@9(a
+@9lb
+@9?	
+#A9.
+hNB9h
++A9P
+h"B9h
+?A9C\
+h&B9h
+@9i2
+BA_8
+8CQ_8#Q
+8Da_8$a
+8Eq_8%q
+*i*B9	
+iJAy
+;A9-
+A9af
+2A9H
+.A9k
+UA9h
+}A9h
+h*A9h
+h*A9h
+hzK9
+	(@9
+T	qB9I
+aB9.
+iB9 
+YAy"
+qB9#
+eK9$@
+aK9&`
+yK9'
+Ey.`
+Ey/p
+	Fy1
+)Fy$
+B9%`
+B9&d
+B9'h
+B9.l
+A9- 
+T	Q+
+*%C9*
+1)C9HA
+9 	C9 
+9j>@
+_B9?	
+CB9?
+&@9M%
+CB9?
+2h>@
+CB9_
+CB9_
+RWi(
+7kvC
+7hzC
+P7/iy
+41iy
+R"ip
+R6ik
+*7io
+2gvC
+	@9k"A9	]
+9n.@9
+9o*@9
+Tp>@9
+<@9g
+RLi(
+)*Ki(
+@9	]
+R i,
+*wh'
+2xj#
+rsi)
+r*ik
+	MA8
+	@9i=
+(MA8*
+@9/	@9-
+9@9	
+	@9l
+@9,>
+A)dB
+	AC9
+r*i(8
+rhv@
+r*u@
+9A)k
+rlu@
+rlu@
+(MA8*
+@9+	@9)
+BM@8M
+@9N	@9O
+(UN9h
+hzixH
+hz)x)
+r	sA
+jj 8
+jj 8
+ij 8
+RZ#	
+jh8h
+@9"]
+@9c]
+)k{8
+@9d\
+@9@\
+*@9%=
+.@9c
+RB|,
+` Dz
+RBD-
+RBx0
+RBX1
+RBX1
+RBD4
+2N{-
+*-@8N
+ib8O
+_8?)
+@9ibA9
+@9?5
+	ha8
+*	qA
+ASSERT_EFI_ERROR (Status = %r)
+DriverEntryPoint.c
+!EFI_ERROR (Status)
+UFSDxe
+AutoGen.c
+UFS.c
+CR has Bad Signature
+GetSupportedLbaWriteProtectTypes: Get device info failed, status 0x%x
+GetSupportedLbaWriteProtectTypes: Invalid value for bLUWriteProtect
+ufs_set_pon_write_protect with return value of %d
+GetLbaWriteProtectType: Get device info failed, status 0x%x
+GetLbaWriteProtect: UFSGetSecureWpConfigBlockt failed with return value of 0x%x
+GetLbaWriteProtect: Invalid bLUWriteProtect value 0x%x
+SetLbaWriteProtect: Get device info failed, status 0x%x
+LBA write protect only allowed for bLUWriteProtect = 0
+UFSSetLbaWriteProtect: UFSGetSecureWpConfigBlock failed with return value of 0x%x
+Number of configuration entries too large
+UFSSetLbaWriteProtect: Invalid WpType
+UFSSetLbaWriteProtect: UFSSetSecureWpConfigBlock failed with return value of 0x%x
+ClearWriteProtect: Get device info failed, status 0x%x
+Clear write protect only allowed for bLUWriteProtect = 0
+ClearWriteProtect: UFSGetSecureWpConfigBlock failed with return value of 0x%x
+ClearWriteProtect: UFSSetSecureWpConfigBlock failed with return value of 0x%x
+UFS READ with return value of %d
+UFS WRITE with return value of %d
+Failed to initialize RPMB Listener, Status 0x%08x
+Failed to initialize GPT Listener, Status 0x%08x
+Failed to initialize Partition config, Status 0x%08x
+UFS IOMMU LocateProtocol failed 0x%x
+UFS IOMMU domain create failed
+EnableUfsIOC
+UFS IOMMU domain configure failed
+\_SB_.UFS0
+UFS IOMMU domain attach ARID 0x0 failed
+UFS_DRVR
+UfsSmmuConfigForOtherBootDev
+UFSSmmuConfig failed, status 0x%x
+!EFI_ERROR (((RETURN_STATUS)(0x8000000000000000ULL | (7))))
+Cannot open UFS RPMB!
+Failed to allocate memory for RPMB listener
+Failed to allocate memory for GPT listener
+Cannot open UFS WLUN BOOT!
+Get Card Info FAILED %x
+Set Active Boot LU FAILED. %x
+Get Card Info FAILED. %x
+Get Card Serial Number FAILED. %x
+UFS UNMAP with return value of %d
+UFS purge with return value of %d
+2(/-
+UfsBlockIO2.c
+Blkio2: Bad transfer type value!
+Blkio2: Warning transfer started but DEVICE_IDLE
+temp_token
+UNKNOWN_STATE!
+ERROR: Failed to Get Shared Imem Boot Device type 
+SharedIMEMBaseAddr
+OverRideSharedImemBootCfg
+MemoryAllocationLib.c
+Pages != 0
+(Alignment & (Alignment - 1)) == 0
+RealPages > Pages
+Buffer != ((void *) 0)
+AllocationSize <= (0xFFFFFFFFFFFFFFFFULL - (UINTN) Buffer + 1)
+UEFI Config Lib
+DebugLib.c
+Format != ((void *) 0)
+ASSERT %a +%d: %a
+ZeroMemWrapper.c
+Length <= (0xFFFFFFFFFFFFFFFFULL - (UINTN)Buffer + 1)
+SetMemWrapper.c
+(Length - 1) <= (0xFFFFFFFFFFFFFFFFULL - (UINTN)Buffer)
+CopyMemWrapper.c
+(Length - 1) <= (0xFFFFFFFFFFFFFFFFULL - (UINTN)DestinationBuffer)
+(Length - 1) <= (0xFFFFFFFFFFFFFFFFULL - (UINTN)SourceBuffer)
+String.c
+Destination != ((void *) 0)
+((UINTN) Destination & 0x00000001) == 0
+Source != Destination
+(UINTN) ( (Destination + Length + 1) < Source )
+(UINTN) ( (Source + Length + 1) < Destination )
+(UINTN) ( (Destination + Length) < Source)
+(UINTN) ( (Source + StrLen(Source)) < Destination )
+Length <= _gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength
+String != ((void *) 0)
+((UINTN) String & 0x00000001) == 0
+Length < _gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength
+StrSize (FirstString) != 0
+StrSize (SecondString) != 0
+StrSize (Destination) != 0
+StrSize (String) != 0
+StrSize (SearchString) != 0
+StrSize (Source) != 0
+(UINTN) ((CHAR8*) Source != (CHAR8*) Destination)
+(UINTN) ( (Destination + Length + 1) < ( (CHAR8*)Source ) )
+(UINTN) ( (CHAR8*) (Source + Length + 1) < Destination )
+*Source < 0x100
+AsciiStrSize (ReturnValue) != 0
+(UINTN) ( (Destination + Length) < Source )
+(UINTN) ( (Source + Length) < Destination )
+Length <= _gPcd_FixedAtBuild_PcdMaximumAsciiStringLength
+Length < _gPcd_FixedAtBuild_PcdMaximumAsciiStringLength
+AsciiStrSize (FirstString)
+AsciiStrSize (SecondString)
+AsciiStrSize (Destination) != 0
+AsciiStrSize (String) != 0
+AsciiStrSize (SearchString) != 0
+AsciiStrSize (Source) != 0
+(UINTN) ((CHAR8 *) Destination - Source) > AsciiStrLen (Source)
+(UINTN) (Source - (CHAR8 *) Destination) >= (AsciiStrSize (Source) * sizeof (CHAR16))
+StrSize (ReturnValue) != 0
+Value < 100
+Value < 0xa0
+(Value & 0xf) < 0xa
+SafeString.c
+((UINTN) Source & 0x00000001) == 0
+(Destination != ((void *) 0))
+(Source != ((void *) 0))
+(DestMax <= (_gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength))
+(DestMax != 0)
+(DestMax > SourceLen)
+InternalSafeStringNoStrOverlap (Destination, DestMax, (CHAR16 *)Source, SourceLen + 1)
+(Length <= (_gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength))
+(CopyLen != 0)
+(CopyLen > SourceLen)
+(String != ((void *) 0))
+(Data != ((void *) 0))
+(StrnLenS (String, (_gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength) + 1) <= (_gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength))
+(Address != ((void *) 0))
+AddressIndex + 1 < (sizeof (Address->Addr) / sizeof ((Address->Addr)[0]))
+(Guid != ((void *) 0))
+(Buffer != ((void *) 0))
+((Length & 0x00000001) == 0)
+(MaxBufferSize >= Length / 2)
+(DestMax <= (_gPcd_FixedAtBuild_PcdMaximumAsciiStringLength))
+InternalSafeStringNoAsciiStrOverlap (Destination, DestMax, (CHAR8 *)Source, SourceLen + 1)
+(Length <= (_gPcd_FixedAtBuild_PcdMaximumAsciiStringLength))
+(AsciiStrnLenS (String, (_gPcd_FixedAtBuild_PcdMaximumAsciiStringLength) + 1) <= (_gPcd_FixedAtBuild_PcdMaximumAsciiStringLength))
+!InternalSafeStringIsOverlap (Destination, DestMax, (void *)Source, (SourceLen + 1) * sizeof(CHAR16))
+(DestinationLength != ((void *) 0))
+!InternalSafeStringIsOverlap (Destination, DestMax * sizeof(CHAR16), (void *)Source, SourceLen + 1)
+RShiftU64.c
+Count < 64
+UefiBootServicesTableLib.c
+gImageHandle != ((void *) 0)
+gST != ((void *) 0)
+gBS != ((void *) 0)
+UefiRuntimeServicesTableLib.c
+gRT != ((void *) 0)
+UefiLib.c
+TableGuid != ((void *) 0)
+Table != ((void *) 0)
+ProtocolGuid != ((void *) 0)
+NotifyFunction != ((void *) 0)
+Registration != ((void *) 0)
+Name != ((void *) 0)
+NotifyTpl <= 31
+Lock != ((void *) 0)
+Priority <= 31
+Lock->Lock == EfiLockReleased
+Lock->Lock != EfiLockUninitialized
+Lock->Lock == EfiLockAcquired
+Guid != ((void *) 0)
+Name != ((void *) 0) && Guid != ((void *) 0) && Value != ((void *) 0)
+*Value != ((void *) 0)
+SupportedLanguages != ((void *) 0)
+DxeServicesTableLib.c
+gDS != ((void *) 0)
+HobLib.c
+mHobList != ((void *) 0)
+HobStart != ((void *) 0)
+((BOOLEAN)(0==1))
+ArmArchTimerLib.c
+(_gPcd_FixedAtBuild_PcdArmArchTimerFreqInHz/1000000U)
+ArmGenericTimerGetTimerFreq () != 0
+ARM Architectural Timer is not available in the CPU, hence this library cannot be used.
+PageAttributeToGcdAttribute: PageAttributes:0x%lX not supported.
+ArmMmuLibCore.c
+MemoryTable != ((void *) 0)
+ArmConfigureMmu: The MaxAddress 0x%lX is not supported by this MMU configuration.
+TranslationTableAttribute == ARM_MEMORY_REGION_ATTRIBUTE_WRITE_BACK || TranslationTableAttribute == ARM_MEMORY_REGION_ATTRIBUTE_WRITE_BACK_XN || TranslationTableAttribute == ARM_MEMORY_REGION_ATTRIBUTE_NONSECURE_WRITE_BACK
+!EFI_ERROR (((RETURN_STATUS)(0x8000000000000000ULL | (2))))
+WARN: Not BBM Safe Region: 0x%x
+(T0SZ != ((void *) 0)) && (TableEntryCount != ((void *) 0))
+TopBit != 0
+UncachedMemoryAllocationLib.c
+XN: 0x%016lx--0x%016lx [Failed]
+ProvisionRpmbTestKey: UncachedAllocateZeroPool failed!
+ProvisionRpmbTestKey: Failed to find ScmProtocol!!Status = (0x%x)
+ConfigRpmbStorPartitions: Failed to find RPMB Protocol
+ConfigRpmbStorPartitions: OpenParser failed
+ConfigGptStorPartitions: OpenParser failed
+ConfigStorPartitions: OpenParser failed
+VersionNum
+ConfigStorPartitions: Config file version mismatch
+Failed to load partiapp.cfg!Status = (0x%x)
+Locate RPMB Protocol failed, status = 0x%x
+RPMB not provisioned
+RPMB ReadCounterPkt failed, Result = %d
+Cannot read the data: RPMB is not provisioned, status = 0x%x
+RPMBProvisioned failed, status 0x%x
+RPMBCreateReadPacket failed, status = 0x%x
+AllocateZeroPool failed
+RPMBReadBlocks Failed, status = 0x%x
+RPMB.128KB
+RPMB.256KB
+RPMB.512KB
+RPMB.1MB
+Version
+DevId
+PartitionGuid
+AppNameId
+AppPartitionId
+SizeInSectors
+SizeInBytes
+Locate SCM protocol failed with return value of 0x%x
+OsTypeString
+Error reading OsTypeString
+Locate TzeLoader protocol failed with return value of 0x%x
+Loading storsec from TZAPPS failed with return value of 0x%x
+Locate Qseecom protocol failed with return value of 0x%x
+storsec
+Loading storsec failed with return value of 0x%x
+Invalid OsTypeString
+ScmSendCommand failed, Status = 0x%x
+Failed to allocate SCM buffer
+UFSGetSecureWpConfigBlock: SendStorSecAppRequest failed with return value of 0x%x
+UFSGetSecureWpConfigBlock: SendStorSecAppRequest response status 0x%x
+Failed to Allocate SCM buffer
+UFSSetSecureWpConfigBlock: SendStorSecAppRequest failed with return value of 0x%x
+UFSSetSecureWpConfigBlock: SendStorSecAppRequest response status 0x%x
+qcom.tz.storsecapp
+UFS INQUIRY ID: %s
+ufs_error_log: %x
+IS: %x, UECPA: %x, UECDL: %x, UECN: %x, UECT: %x, UECDME: %x, REG_PA_ERR_CODE: %x
+GPTListener.c
+GPTListenerAllocMem: Failed memory allocation
+GPTListenerInit: GPTListenerParams is NULL
+GPTListenerReadSectors: Failed mem allocation. mTzSDGptRWReq
+GPTListenerWriteSectors: Failed mem allocation. mTzSDGptRWReq
+RpmbListener.c
+RPMBListenerAllocMem: Failed memory allocation
+RPMBListenerInit: RPMBListenerParams is NULL
+RPMBListenerReadSectors: BufferPtr is NULL
+RPMBListenerReadSectors: Failed mem allocation.
+RPMBListenerWriteSectors: BufferPtr is NULL
+RPMBListenerWriteSectors: Failed mem allocation.
+UNKNOWN
+CDP (SURF)
+FLUID
+FUSION
+MTP_MDM
+LiQUID
+DragonBoard
+RUMI
+VIRTIO
+GOBI
+QcomLib.c
+Key != ((void *) 0)
+EnableLogFsSyncInRetail
+%d.%d
+Qualcomm Snapdragon 
+Qualcomm Snapdragon xxxxxxx
+ERROR: Memory Allocation failed !
+Unable to delete file
+Invalid parameters passed to GetUUID
+LocateProtocol: ChipInfo unsuccessful! status: %d
+Failed to get MSM serial number
+LocateProtocol: EfiHash2Protocol unsuccessful! status: %d
+GetHashSize unsuccessful! status: %d
+GetHashSize: DigestSize is not an expected value!
+HashInit unsuccessful! status: %d
+HashUpdate unsuccessful! status: %d
+HashFinal unsuccessful! status: %d
+Failed to get BlkIo handles
+Failed to get Card Info! status: %d
+ERROR: Could not allocate space for dump buffer
+WARNING: Could not find protocol to dump buffer
+ERROR: Failed to get debug log. Status = 0x%08x
+TZApp Log Buffer: (Size = %d)
+-- START -- 
+-- DONE -- 
+ReadKeyInternal: gEfiSimpleTextInputExProtocolGuid handles = %d
+ReadKeyInternal: Read KEY = 0x%x
+0123456789ABCDEFSuccess
+Warning Unknown Glyph
+Warning Delete Failure
+Warning Write Failure
+Warning Buffer Too Small
+Warning Stale Data
+Load Error
+Invalid Parameter
+Unsupported
+Bad Buffer Size
+Buffer Too Small
+Not Ready
+Device Error
+Write Protected
+Out of Resources
+Volume Corrupt
+Volume Full
+No Media
+Media changed
+Not Found
+Access Denied
+No Response
+No mapping
+Time out
+Not started
+Already started
+Aborted
+ICMP Error
+TFTP Error
+Protocol Error
+Incompatible Version
+Security Violation
+CRC Error
+End of Media
+Reserved (29)
+Reserved (30)
+End of File
+Invalid Language
+Compromised Data
+PrintLibInternal.c
+Width < 38
+(Flags & ~(0x01 | 0x08 | 0x20 | 0x80)) == 0
+((Flags & 0x08) == 0) || ((Flags & 0x80) == 0)
+(BufferSize <= (_gPcd_FixedAtBuild_PcdMaximumAsciiStringLength))
+(BufferSize <= (_gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength) * sizeof (CHAR16) + 1)
+((Flags & ~(0x01 | 0x08 | 0x20 | 0x80)) == 0)
+(((Flags & 0x08) == 0) || ((Flags & 0x80) == 0))
+(Width < 38)
+(BufferSize >= (Width + 1) * Increment)
+(Format != ((void *) 0))
+(BufferSize <= (_gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength))
+(StrnLenS ((CHAR16 *)Format, (_gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength) + 1) <= (_gPcd_FixedAtBuild_PcdMaximumUnicodeStringLength))
+(AsciiStrnLenS (Format, (_gPcd_FixedAtBuild_PcdMaximumAsciiStringLength) + 1) <= (_gPcd_FixedAtBuild_PcdMaximumAsciiStringLength))
+<null string>
+<null guid>
+%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x
+<null time>
+%02d/%02d/%04d  %02d:%02d
+%08X
+SerialPort Lib
+IoLibArm.c
+(Address & 1) == 0
+(Address & 3) == 0
+(Address & 7) == 0
+MemLibGuid.c
+DestinationGuid != ((void *) 0)
+SourceGuid != ((void *) 0)
+Guid1 != ((void *) 0)
+Guid2 != ((void *) 0)
+((UINTN)Buffer & (sizeof (Guid->Data1) - 1)) == 0
+(Length & (sizeof (*GuidPtr) - 1)) == 0
+CompareMemWrapper.c
+DestinationBuffer != ((void *) 0)
+SourceBuffer != ((void *) 0)
+DivU64x32Remainder.c
+Divisor != 0
+LinkedList.c
+List != ((void *) 0)
+List->ForwardLink != ((void *) 0)
+List->BackLink != ((void *) 0)
+InternalBaseLibIsListValid (FirstEntry)
+SecondEntry != ((void *) 0)
+ListHead != ((void *) 0)
+((BOOLEAN)(0==1)) == IsNodeInList ((ListHead), (Entry))
+InternalBaseLibIsListValid (ListHead)
+InternalBaseLibIsListValid (List)
+((BOOLEAN)(1==1)) == IsNodeInList ((List), (Node))
+((BOOLEAN)(1==1)) == IsNodeInList ((FirstEntry), (SecondEntry))
+!IsListEmpty (Entry)
+Unaligned.c
+-+   0X0x
+(null)
+0123456789ABCDEF
+UFS: Allocate memory of size 0x%x     [FAILED]
+DevicePathUtilities.c
+DevicePath != ((void *) 0)
+Node != ((void *) 0)
+(Length >= sizeof (EFI_DEVICE_PATH_PROTOCOL)) && (Length < 0x00010000)
+Size != ((void *) 0)
+p^fM
+nW	?m
+ir;a
+nRH}
+	WZ@
+2(/-
+ir;r${
+nW	?m
+ir;E\z
+QMFE
+ufs 
+ufs 
+ufs 
+ufs 
+ufs 
+ufs 
+ufs 
+ufs 
+ufs 
+ufs 
+ufs 
+NB10
+/home/work/violet-q-stable-build/vendor/qcom/non-hlos-2019-spf10/BOOT.XF.3.1/boot_images/Build/SDM6150LA_Core/RELEASE_CLANG40LINUX/AARCH64/QcomPkg/Drivers/UFSDxe/UFSDxe/DEBUG/UFSDxe.dll

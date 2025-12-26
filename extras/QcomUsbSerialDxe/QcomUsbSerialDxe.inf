@@ -1,0 +1,34 @@
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = QcomUsbSerialDxe
+  FILE_GUID                      = 61141074-6018-4dc5-901c-6078332152cd
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = QcomUsbSerialEntryPoint
+
+[Sources]
+  QcomUsbSerialDxe.c
+  QcomUsbSerialDxe.h
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  EmbeddedPkg/EmbeddedPkg.dec
+  Silicon/Qualcomm/QcomPkg/QcomPkg.dec
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  UefiLib
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  PcdLib
+  MemoryAllocationLib
+
+[Protocols]
+  gEfiUsbFunctionIoProtocolGuid   ## CONSUMES
+  gEfiSerialIoProtocolGuid        ## PRODUCES
+
+[Depex]
+  gEfiUsbFunctionIoProtocolGuid
