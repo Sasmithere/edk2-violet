@@ -61,7 +61,7 @@ To recompile this image, use:
 ```
 
 use the exact mkbootimg compile command as above output.
-with 1. initramfs.cpio.gz of your phones "boot" img 
+with 1. initramfs.cpio.gz of your phones "twrp recovery" img 
      2. zImage of dipper
 
 congrats now you can use the new boot image to separate partitions etc , all features provided by dipper in WOA , note: the "msc" command may not work for all devices, so i recommend you track/find the msc binary then perform the operations related to you mobile yourselves or edit it whatever . 
