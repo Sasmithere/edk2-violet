@@ -14,6 +14,7 @@
   ArmPkg/ArmPkg.dec
   EmbeddedPkg/EmbeddedPkg.dec
   Silicon/Qualcomm/QcomPkg/QcomPkg.dec
+  Silicon/Qualcomm/QcomPkg/Drivers/NovatekTouchDxe/NovatekTouch.dec
 
 [BuildOptions.AARCH64]
   GCC:*_*_*_CC_FLAGS = -Werror -Wno-error=unused-variable
@@ -31,28 +32,30 @@
   UefiLib
 
 [Pcd]
-  gQcomTokenSpaceGuid.PcdTouchCtlrAddress
-  gQcomTokenSpaceGuid.PcdTouchCtlrResetPin
-  gQcomTokenSpaceGuid.PcdTouchCtlrIntPin
-  gQcomTokenSpaceGuid.PcdTouchCtlrI2cDevice
-  gQcomTokenSpaceGuid.PcdTouchMinX
-  gQcomTokenSpaceGuid.PcdTouchMaxX
-  gQcomTokenSpaceGuid.PcdTouchInvertedX
-  gQcomTokenSpaceGuid.PcdTouchMinY
-  gQcomTokenSpaceGuid.PcdTouchMaxY
-  gQcomTokenSpaceGuid.PcdTouchInvertedY
-  gQcomTokenSpaceGuid.PcdTouchCtlrVddPin
-  gQcomTokenSpaceGuid.PcdTouchCtlrVddIoPin
-  gQcomTokenSpaceGuid.PcdTouchCtlrVddPinActiveLow
+  gNovatekTouchTokenSpaceGuid.PcdNvtTouchCtlrAddress
+  gNovatekTouchTokenSpaceGuid.PcdNvtTouchCtlrResetPin
+  gNovatekTouchTokenSpaceGuid.PcdNvtTouchCtlrIntPin
+  gNovatekTouchTokenSpaceGuid.PcdNvtTouchCtlrI2cDevice
+  gNovatekTouchTokenSpaceGuid.PcdNvtTouchCtlrVddPin
+  gNovatekTouchTokenSpaceGuid.PcdNvtTouchCtlrVddIoPin
+  gNovatekTouchTokenSpaceGuid.PcdNvtTouchCtlrVddPinActiveLow
+  gNovatekTouchTokenSpaceGuid.PcdNvtTouchMinX
+  gNovatekTouchTokenSpaceGuid.PcdNvtTouchMaxX
+  gNovatekTouchTokenSpaceGuid.PcdNvtTouchInvertedX
+  gNovatekTouchTokenSpaceGuid.PcdNvtTouchMinY
+  gNovatekTouchTokenSpaceGuid.PcdNvtTouchMaxY
+  gNovatekTouchTokenSpaceGuid.PcdNvtTouchInvertedY
 
 [Protocols]
   gQcomI2cProtocolGuid
-  gQcomTlmmProtocolGuid
-  gNovatekTouchDeviceProtocolGuid
-  gEfiDevicePathProtocolGuid
-  gQcomUsbConfigProtocolGuid
   gEfiClockProtocolGuid
+  gQcomTlmmProtocolGuid
+  gNovatekTouchDeviceProtocolGuid ##PRODUCES
+  gEfiDevicePathProtocolGuid
   gEfiPlatformInfoProtocolGuid
 
 [Depex]
-  gQcomI2cProtocolGuid AND gQcomTlmmProtocolGuid AND gEfiClockProtocolGuid
+  # gQcomI2cProtocolGuid AND gQcomTlmmProtocolGuid AND gEfiClockProtocolGuid
+  # gQcomTlmmProtocolGuid AND gEfiClockProtocolGuid
+  gQcomTlmmProtocolGuid
+

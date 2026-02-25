@@ -31,7 +31,7 @@ ErasePolarity = 1
 
 # This one is tricky, it must be: BlockSize * NumBlocks = Size
 BlockSize     = 0x00001000
-NumBlocks     = 0x700
+NumBlocks     = 0x800
 
 ################################################################################
 #
@@ -49,7 +49,7 @@ NumBlocks     = 0x700
 #
 ################################################################################
 
-0x00000000|0x00700000
+0x00000000|0x800000
 gArmTokenSpaceGuid.PcdFvBaseAddress|gArmTokenSpaceGuid.PcdFvSize
 FV = FVMAIN_COMPACT
 
@@ -131,12 +131,12 @@ READ_LOCK_STATUS   = TRUE
 # BSP drivers
 !include Platform/Qualcomm/sm6150/dxe.fdf.inc
 
-  INF Silicon/Qualcomm/QcomPkg/Drivers/SimpleFbDxe/SimpleFbDxe.inf
+  #INF Silicon/Qualcomm/QcomPkg/Drivers/SimpleFbDxe/SimpleFbDxe.inf
 
   #
   # Helper drivers
   #
-  #INF Platform/RenegadePkg/Drivers/SetCPUFreqDxe/SetCPUFreqDxe.inf
+  INF Platform/RenegadePkg/Drivers/SetCPUFreqDxe/SetCPUFreqDxe.inf
 
   #
   # USB Host Support
@@ -148,11 +148,13 @@ READ_LOCK_STATUS   = TRUE
   INF MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
   INF MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
   
+  INF EmbeddedPkg/Drivers/VirtualKeyboardDxe/VirtualKeyboardDxe.inf
+  
   #
   # Debug UART
   #
-  #INF MdeModulePkg/Universal/DebugPortDxe/DebugPortDxe.inf
-  #INF MdeModulePkg/Universal/SerialDxe/SerialDxe.inf
+  INF MdeModulePkg/Universal/DebugPortDxe/DebugPortDxe.inf
+  INF MdeModulePkg/Universal/SerialDxe/SerialDxe.inf
   
   #
   # USB Peripheral Support
@@ -169,8 +171,8 @@ READ_LOCK_STATUS   = TRUE
   #
   # FAT filesystem + GPT/MBR partitioning
   #
-  INF xbl-violet/MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
-  INF xbl-violet/MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
+  INF MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
+  INF MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
   INF FatPkg/EnhancedFatDxe/Fat.inf
   INF MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   INF MdeModulePkg/Universal/FvSimpleFileSystemDxe/FvSimpleFileSystemDxe.inf
@@ -183,12 +185,13 @@ READ_LOCK_STATUS   = TRUE
   #
   INF MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
   INF MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
-  INF MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResourceTableDxe.inf
+  #INF MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResourceTableDxe.inf
 
   #
   # FDT support
   #
   INF EmbeddedPkg/Drivers/DtPlatformDxe/DtPlatformDxe.inf
+  #INF EmbeddedPkg/Drivers/FdtClientDxe/FdtClientDxe.inf
 
   #
   # SMBIOS Support
@@ -247,6 +250,12 @@ READ_LOCK_STATUS   = TRUE
 # Device specific fdf
 !include $(DEVICE_DXE_FV_COMPONENTS)
 
+#INF LogDumperDxe/LogDumperDxe.inf
+
+FILE DRIVER = 69a34938-348f-4322-863a-233ed10129e7 {
+   SECTION PE32 = LogDumperApp/LogDumperApp.efi
+}
+
 [FV.FVMAIN_COMPACT]
 FvAlignment        = 8
 ERASE_POLARITY     = 1
@@ -272,34 +281,6 @@ READ_LOCK_STATUS   = TRUE
       SECTION FV_IMAGE = FVMAIN
     }
   }
-  
-FILE FREEFORM = 45079628-9EC0-421A-9D33-1A27B3C42A96 {
-    SECTION UI = "Panel_truly_hx83112a_fhd_video.xml"
-    SECTION RAW = Platform/Xiaomi/sm6150/RawFiles/Panel_truly_hx83112a_fhd_video.xml
-}
-
-
-FILE FREEFORM = 937D07E9-DA4E-48FD-B6AB-E9748FBF51FB {
-    SECTION UI = "Panel_tianma_ft8719_fhd_video.xml"
-    SECTION RAW = Platform/Xiaomi/sm6150/RawFiles/Panel_tianma_ft8719_fhd_video.xml
-}
-
-
-FILE FREEFORM = 1F8414F2-28E7-4622-8DBE-9D8D37962041 {
-    SECTION UI = "Panel_shenchao_nt36672a_fhd_video.xml"
-    SECTION RAW = Platform/Xiaomi/sm6150/RawFiles/Panel_shenchao_nt36672a_fhd_video.xml
-}
-
-FILE FREEFORM = 1E2C1F8E-903F-42AA-B1CC-ECA4056F7EEF {
-    SECTION UI = "Panel_truly_td4328_1080p_cmd.xml"
-    SECTION RAW = Platform/Xiaomi/sm6150/RawFiles/Panel_truly_td4328_1080p_cmd.xml
-}
-
-
-FILE FREEFORM = 6C997290-7B00-4E81-A004-350EF927DAFA {
-    SECTION UI = "Panel_truly_td4328_1080p_vid.xml"
-    SECTION RAW = Platform/Xiaomi/sm6150/RawFiles/Panel_truly_td4328_1080p_vid.xml
-}
 
 FILE FREEFORM = 45FE4B7C-150C-45DA-A021-4BEB2048EC6F {
   SECTION RAW = Platform/Xiaomi/sm6150/RawFiles/QcomChargerCfg.cfg
@@ -316,10 +297,17 @@ FILE FREEFORM = DDE58710-41CD-4306-DBFB-3FA90BB1D2DD {
   SECTION UI = "uefiplat.cfg"
 }
 
+FILE FREEFORM = A1E235DE-E825-4591-9623-C43175811826 {
+    SECTION UI = "SecParti.cfg"
+    SECTION RAW = Platform/Xiaomi/sm6150/RawFiles/SecParti.cfg
+}
+
 FILE FREEFORM = 2fd6672f-f3f4-4fb7-b454-a86fa9f780b0 {
   SECTION RAW = startup.nsh
   SECTION UI  = "startup.nsh"
 }
+
+
 
 !include Silicon/Qualcomm/QcomPkg/QcomCommonFdf.inc
 

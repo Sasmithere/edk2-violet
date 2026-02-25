@@ -7,6 +7,7 @@
 #include <Library/UefiLib.h>
 
 #include <Protocol/AbsolutePointer.h>
+#include <Protocol/EFIClock.h>
 #include <Protocol/EFII2C.h>
 #include <Protocol/EFITlmm.h>
 
@@ -52,27 +53,29 @@ NvtDeviceInitialize(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 
   // Config
   // Hardcoded from sm6150-novatek-i2c_f7b.dtsi
-  Instance->SlaveCfg.SlaveAddress  = PcdGet16(PcdTouchCtlrAddress); // 0x62
-  Instance->ControllerResetPin     = PcdGet32(PcdTouchCtlrResetPin);
-  Instance->ControllerInterruptPin = PcdGet32(PcdTouchCtlrIntPin);
-  Instance->ControllerI2cDevice = PcdGet32(PcdTouchCtlrI2cDevice);   
-  Instance->ControllerVddPin          = PcdGet32(PcdTouchCtlrVddPin);
-  Instance->ControllerVddIoPin        = PcdGet32(PcdTouchCtlrVddIoPin);
-  Instance->ControllerVddCtlActiveLow = PcdGetBool(PcdTouchCtlrVddPinActiveLow);
+  // Config from PCDs (NovatekTouch.dec)
+  Instance->SlaveCfg.SlaveAddress  = PcdGet16(PcdNvtTouchCtlrAddress);
+  Instance->ControllerResetPin     = PcdGet32(PcdNvtTouchCtlrResetPin);
+  Instance->ControllerInterruptPin = PcdGet32(PcdNvtTouchCtlrIntPin);
+  Instance->ControllerI2cDevice    = PcdGet32(PcdNvtTouchCtlrI2cDevice);
+  Instance->ControllerVddPin       = PcdGet32(PcdNvtTouchCtlrVddPin);
+  Instance->ControllerVddIoPin     = PcdGet32(PcdNvtTouchCtlrVddIoPin);
+  Instance->ControllerVddCtlActiveLow =
+      PcdGetBool(PcdNvtTouchCtlrVddPinActiveLow);
 
-  Instance->XMax = 1080; // Default FHD+ width
-  Instance->YMax = 2340; // Default FHD+ height
+  Instance->XMax = 1080; // Hard fallback
+  Instance->YMax = 2340;
 
   // Allow PCD override for resolution if set
-  if (PcdGet32(PcdTouchMaxX) != 0)
-    Instance->XMax = PcdGet32(PcdTouchMaxX);
-  if (PcdGet32(PcdTouchMaxY) != 0)
-    Instance->YMax = PcdGet32(PcdTouchMaxY);
+  if (PcdGet32(PcdNvtTouchMaxX) != 0)
+    Instance->XMax = PcdGet32(PcdNvtTouchMaxX);
+  if (PcdGet32(PcdNvtTouchMaxY) != 0)
+    Instance->YMax = PcdGet32(PcdNvtTouchMaxY);
 
-  Instance->XMin      = PcdGet32(PcdTouchMinX);
-  Instance->XInverted = PcdGetBool(PcdTouchInvertedX);
-  Instance->YMin      = PcdGet32(PcdTouchMinY);
-  Instance->YInverted = PcdGetBool(PcdTouchInvertedY);
+  Instance->XMin      = PcdGet32(PcdNvtTouchMinX);
+  Instance->XInverted = PcdGetBool(PcdNvtTouchInvertedX);
+  Instance->YMin      = PcdGet32(PcdNvtTouchMinY);
+  Instance->YInverted = PcdGetBool(PcdNvtTouchInvertedY);
 
   DEBUG(
       (EFI_D_INFO,
@@ -86,6 +89,7 @@ NvtDeviceInitialize(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
        Instance->XMin, Instance->XMax, Instance->XInverted, Instance->YMax,
        Instance->YMax, Instance->YInverted));
 
+  /*
   // I2C Protocol
   Status = gBS->LocateProtocol(
       &gQcomI2cProtocolGuid, NULL, (VOID *)&Instance->I2cQupProtocol);
@@ -95,6 +99,7 @@ NvtDeviceInitialize(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
          Status));
     goto exit;
   }
+  */
 
   // GPIO Processing
   Status = gBS->LocateProtocol(
@@ -115,8 +120,6 @@ NvtDeviceInitialize(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
         (EFI_D_ERROR, "NovatekNvtTsDevice: Unable to install protocol: %r\n",
          Status));
   }
-
-  // DEBUG: Check for Protocols
 
 exit:
   return Status;

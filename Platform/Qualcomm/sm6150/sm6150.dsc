@@ -23,18 +23,15 @@
 !include Silicon/Qualcomm/QcomPkg/QcomCommonDsc.inc
 
 [PcdsFixedAtBuild.common]
-  gArmTokenSpaceGuid.PcdSystemMemoryBase|0x080000000         # Starting address
-  gArmTokenSpaceGuid.PcdSystemMemorySize|0x180000000         # Limit to 6GB Size here
+  gArmTokenSpaceGuid.PcdSystemMemoryBase|0x80000000         # Starting address
+  gArmTokenSpaceGuid.PcdSystemMemorySize|0xFDFA0000         # Limit to 4GB Size here
 
   gArmTokenSpaceGuid.PcdCpuVectorBaseAddress|0x9FF8C000     # CPU Vectors
   gArmTokenSpaceGuid.PcdArmArchTimerFreqInHz|19200000
   gArmTokenSpaceGuid.PcdArmArchTimerSecIntrNum|17
   gArmTokenSpaceGuid.PcdArmArchTimerIntrNum|18
-  gArmTokenSpaceGuid.PcdArmArchTimerVirtIntrNum|30
-  gArmTokenSpaceGuid.PcdArmArchTimerHypIntrNum|26
   gArmTokenSpaceGuid.PcdGicDistributorBase|0x17a00000
   gArmTokenSpaceGuid.PcdGicRedistributorsBase|0x17a60000
-  gArmTokenSpaceGuid.PcdGicInterruptInterfaceBase|0x17A00000
 
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemRevision|0x00006150
   gEmbeddedTokenSpaceGuid.PcdPrePiStackBase|0x9FF90000      # UEFI Stack
@@ -44,6 +41,8 @@
   gQcomTokenSpaceGuid.PcdUefiMemPoolBase|0xC0000000         # DXE Heap base address
   gQcomTokenSpaceGuid.PcdUefiMemPoolSize|0x0E000000         # UefiMemorySize, DXE heap size
   gQcomTokenSpaceGuid.PcdMipiFrameBufferAddress|0x9C000000
+  
+  gQcomTokenSpaceGuid.PcdDebugUartPortBase|0x880000 #crashes on a800000 , 0xa8c000
 
   gArmPlatformTokenSpaceGuid.PcdCoreCount|8
   gArmPlatformTokenSpaceGuid.PcdClusterCount|2

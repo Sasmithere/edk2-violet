@@ -15,6 +15,7 @@
   ArmPkg/ArmPkg.dec
   EmbeddedPkg/EmbeddedPkg.dec
   Silicon/Qualcomm/QcomPkg/QcomPkg.dec
+  Silicon/Qualcomm/QcomPkg/Drivers/NovatekTouchDxe/NovatekTouch.dec
 
 [BuildOptions.AARCH64]
   GCC:*_*_*_CC_FLAGS = -Werror -Wno-error=unused-variable
@@ -31,20 +32,38 @@
   CompilerIntrinsicsLib
   CacheMaintenanceLib
   UefiLib
+  PcdLib
 
 [Protocols]
   gQcomI2cProtocolGuid
   gEfiI2cIoProtocolGuid
   gEfiClockProtocolGuid
   gQcomTlmmProtocolGuid
+  gEfiSimplePointerProtocolGuid
   gHardwareInterruptProtocolGuid
   gEfiAbsolutePointerProtocolGuid
   gNovatekTouchDeviceProtocolGuid
+  gNovatekTouchConfigProtocolGuid
   gEfiDevicePathProtocolGuid
+  gEfiFirmwareVolume2ProtocolGuid
 
+
+[Pcd]
+  gNovatekTouchTokenSpaceGuid.PcdNvtTsParamsXNum
+  gNovatekTouchTokenSpaceGuid.PcdNvtTsParamsYNum
+  gNovatekTouchTokenSpaceGuid.PcdNvtTsParamsAbsXMax
+  gNovatekTouchTokenSpaceGuid.PcdNvtTsParamsAbsYMax
+  gNovatekTouchTokenSpaceGuid.PcdNvtTsParamsMaxButtons
+  gNovatekTouchTokenSpaceGuid.PcdNvtTouchGpioSda
+  gNovatekTouchTokenSpaceGuid.PcdNvtTouchGpioScl
+  gNovatekTouchTokenSpaceGuid.PcdNvtTouchGpioIrq
+  gNovatekTouchTokenSpaceGuid.PcdNvtTouchGpioRst
+  gNovatekTouchTokenSpaceGuid.PcdNvtTouchI2cDelayUs
+  gNovatekTouchTokenSpaceGuid.PcdNvtTouchRotation
 
 [Guids]
   gEfiEventExitBootServicesGuid
+  gEfiFileInfoGuid
 
 [Depex]
   gNovatekTouchDeviceProtocolGuid
