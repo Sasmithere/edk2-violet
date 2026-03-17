@@ -12,6 +12,7 @@
 #include <PiDxe.h>
 #include <Protocol/GraphicsOutput.h>
 #include <Uefi.h>
+#include <Protocol/Cpu.h>
 
 /// Defines
 /*
@@ -234,6 +235,19 @@ SimpleFbDxeInitialize(
     }
   }
   ASSERT_EFI_ERROR(Status);
+
+  // Force WB cacheability on the framebuffer to prevent C0000005 in winload
+  EFI_CPU_ARCH_PROTOCOL *Cpu;
+  Status = gBS->LocateProtocol(&gEfiCpuArchProtocolGuid, NULL, (VOID **)&Cpu);
+  if (!EFI_ERROR(Status)) {
+    Status = Cpu->SetMemoryAttributes(
+        Cpu, FrameBufferAddress, FrameBufferSize, EFI_MEMORY_WB);
+    if (EFI_ERROR(Status)) {
+      DEBUG((EFI_D_ERROR, "SimpleFbDxe: Failed to set WB Memory Attributes for FrameBuffer: %r\n", Status));
+    } else {
+      DEBUG((EFI_D_INFO, "SimpleFbDxe: Set WB Memory Attributes for FrameBuffer successfully.\n"));
+    }
+  }
 
   // zhuowei: clear the screen to black
   // UEFI standard requires this, since text is white - see

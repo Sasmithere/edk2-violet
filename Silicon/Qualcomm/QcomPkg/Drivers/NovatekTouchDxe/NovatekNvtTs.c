@@ -1,4 +1,4 @@
-// // #include <Uefi.h>
+// #include <Uefi.h>
 
 /* READ THIS MAIN !!! don't blame me if something goes wrong
   *******************************************************************************
@@ -38,6 +38,66 @@
 *******************************************************************************
 */
 
+#define APSS_WDT_BASE 0x17c10000
+#define APSS_WDT_ENABLE_OFFSET 0x8
+
+#define SMMU_BASE 0x15000000
+#define SMMU_CTX_BANK_SIZE 0x1000
+#define SMMU_CTX_BANK_0_OFFSET 0x40000
+#define SMMU_CTX_BANK_SCTLR_OFFSET 0x0
+#define SMMU_CTX_BANK_TTBR0_0_OFFSET 0x20
+#define SMMU_CTX_BANK_TTBR0_1_OFFSET 0x24
+#define SMMU_CTX_BANK_TTBR1_0_OFFSET 0x28
+#define SMMU_CTX_BANK_TTBR1_1_OFFSET 0x2C
+#define SMMU_CTX_BANK_MAIR0_OFFSET 0x38
+#define SMMU_CTX_BANK_MAIR1_OFFSET 0x3C
+#define SMMU_CTX_BANK_TTBCR_OFFSET 0x30
+#define SMMU_CTX_BANK_FSR_OFFSET 0x58
+#define SMMU_NON_CCA_SCTLR 0xE0
+#define SMMU_CCA_SCTLR 0x9F00E0
+
+#define SMMU_SMR0_OFFSET 0x800
+#define SMMU_S2CR0_OFFSET 0xC00
+#define SMMU_SMR_VALID (1u << 31)
+#define SMMU_SMR_ID_MASK 0x7FFF
+#define SMMU_S2CR_TYPE_TRANS 0
+#define SMMU_S2CR_TYPE_BYPASS 1
+#define SMMU_S2CR_CBNDX_SHIFT 0
+#define SMMU_S2CR_PRIVCFG_SHIFT 24
+
+#define SMMU_SCR0_OFFSET 0x0
+#define SMMU_SCR0_CLIENTPD (1u << 0)
+#define SMMU_SCR0_USFCFG (1u << 10)
+#define SMMU_GFSR_OFFSET 0x48
+
+#define SMMU_GLOBAL_REGION1_OFFSET 0x1000
+#define SMMU_CBAR0_OFFSET 0x0000
+#define SMMU_CBA2R0_OFFSET 0x0800
+#define SMMU_CBAR_TYPE_S1_BYPASS 1
+#define SMMU_CBA2R_VA64 (1u << 0)
+
+#define SDHC1_SID 0x160
+#define SDHC2_SID 0x260
+
+#define SDHC1_CTX_BANK 0
+#define SDHC2_CTX_BANK 1
+
+#define GCC_BASE 0x00100000
+#define GCC_SDCC1_APPS_CBCR (GCC_BASE + 0x12004)
+#define GCC_SDCC1_AHB_CBCR (GCC_BASE + 0x12008)
+#define GCC_SDCC1_ICE_CBCR (GCC_BASE + 0x1200C)
+#define GCC_SDCC2_APPS_CBCR (GCC_BASE + 0x14004)
+#define GCC_SDCC2_AHB_CBCR (GCC_BASE + 0x14008)
+
+#define GCC_APCS_GPLL0_ENA_VOTE (GCC_BASE + 0x5200C)
+// GDSC Vote Registers for TBUs (VOTE_ENABLE is Bit 0)
+#define GCC_TBU1_GDSC (GCC_BASE + 0x7D044)
+#define GCC_TBU2_GDSC (GCC_BASE + 0x7D048)
+#define GCC_AUDIO_TBU_GDSC (GCC_BASE + 0x7D040)
+#define GCC_PCIE_TBU_GDSC (GCC_BASE + 0x7D04C)
+#define GCC_MNOC_HF0_TBU_GDSC (GCC_BASE + 0x7D050)
+#define GCC_MNOC_SF0_TBU_GDSC (GCC_BASE + 0x7D054)
+
 // #include "NovatekFlash.h"
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
@@ -64,8 +124,10 @@
 #define I2C_HW_Address 0x62 // Hardware Port (Pipe 0)
 
 // Global Variables
-static UINT32    mI2cDelayUs        = 5; // Default, updated by PCD/Protocol
-static EFI_EVENT mScannerTimerEvent = NULL;
+static UINT32 mI2cDelayUs = 5; // Default, updated by PCD/Protocol
+static EFI_EXIT_BOOT_SERVICES mOriginalExitBootServices = NULL;
+static EFI_EVENT              mStickyFixTimerEvent      = NULL;
+static EFI_EVENT              mStickyFixEbsEvent        = NULL;
 
 // Helper Macros
 #define ABS1(x) ((x) < 0 ? -(x) : (x))
@@ -99,7 +161,71 @@ EFI_STATUS EFIAPI
            NvtSetSlaveAddress(NVT_INTERNAL_DATA *Instance, UINT32 Address);
 EFI_STATUS NvtHardReset(NVT_INTERNAL_DATA *Instance);
 VOID       NvtConfigI2cPins(NVT_INTERNAL_DATA *Instance);
-// VOID EFIAPI NvtI2cScannerCallback(IN EFI_EVENT Event, IN VOID *Context);
+EFI_STATUS EFIAPI
+HookedExitBootServices(IN EFI_HANDLE ImageHandle, IN UINTN MapKey);
+
+// --- STICKY FIX ASYNC HANDLERS ---
+#define SDC1_BASE_ADDR 0x7C4000
+
+VOID EFIAPI StickyFixTimerHandler(IN EFI_EVENT Event, IN VOID *Context)
+{
+  UINT32 CurHC2 = MmioRead32(SDC1_BASE_ADDR + 0x3C);
+
+  // Detection: If Bits 29/28 are 0, a reset happened.
+  if ((CurHC2 & ((1 << 29) | (1 << 28))) == 0) {
+    DEBUG(
+        (EFI_D_ERROR,
+         "NVT: [STICKY FIX] Reset Detected! Re-applying settings...\n"));
+  }
+
+  // Re-apply the breakthrough configuration (Retrace State)
+
+  // 1. HC_MODE (0x78) - Legcy Breakthrough + RESET IMMUNITY
+  // Bit 0: Mode En
+  // Bit 13: FF_CLK_SW_RST_DIS (Protects clock logic from reset)
+  // Bit 15: REG_RST_DIS (Protects registers from software reset)
+  MmioWrite32(SDC1_BASE_ADDR + 0x78, 0x00002001 | (1 << 13) | (1 << 15));
+
+  // 2. HOST_CTL2 (0x3C) - 64-bit ADMA & V4
+  MmioWrite32(SDC1_BASE_ADDR + 0x3C, CurHC2 | (1 << 29) | (1 << 28));
+
+  // 3. CLK_CTL (0x2C) - High Speed / Enabled
+  MmioWrite16(SDC1_BASE_ADDR + 0x2C, 0x0007);
+
+  // 4. CAPABILITY SHADOWING (0x21C)
+  // We hammer Bit 28 (64-bit Support) so the driver "sees" the capability.
+  // We MUST keep Bit 31 (Lock) at 0 to avoid 0x7B.
+  UINT32 CurCaps = MmioRead32(SDC1_BASE_ADDR + 0x21C);
+  MmioWrite32(SDC1_BASE_ADDR + 0x21C, (CurCaps | (1 << 28)) & ~(1U << 31));
+}
+
+VOID EFIAPI StickyFixExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
+{
+  // 1. CLEAN HANDOFF
+  // We apply the hammer one last time, then UNLOCK everything
+  // so the Windows kernel can perform its own initialization.
+
+  StickyFixTimerHandler(NULL, NULL);
+
+  // First, unlock capabilities (Clear Bit 31)
+  UINT32 CurCaps = MmioRead32(SDC1_BASE_ADDR + 0x21C);
+  MmioWrite32(SDC1_BASE_ADDR + 0x21C, CurCaps & ~(1U << 31));
+
+  // Second, switch to HLOS Mode (Bit 18 = 0)
+  UINT32 CurVend = MmioRead32(SDC1_BASE_ADDR + 0x20C);
+  MmioWrite32(SDC1_BASE_ADDR + 0x20C, CurVend & ~(1 << 18));
+
+  // 2. Stop the timer to prevent crashes in OS context
+  if (mStickyFixTimerEvent != NULL) {
+    gBS->SetTimer(mStickyFixTimerEvent, TimerCancel, 0);
+    gBS->CloseEvent(mStickyFixTimerEvent);
+    mStickyFixTimerEvent = NULL;
+  }
+
+  DEBUG(
+      (EFI_D_ERROR, "NVT: [STICKY FIX] EBS Callback - Final application "
+                    "complete, timer stopped.\n"));
+}
 
 // --- TRIM TABLE & STRUCTS ---
 #define NVT_ID_BYTE_MAX 6
@@ -1123,46 +1249,47 @@ NVT_INTERNAL_DATA mNvtInstanceTemplate =
                           {0},    // SimplePointerMode
                           NULL,   // PollingTimer
                           NULL,   // TouchWorker
-                          FALSE,  // Initialized
-                          0,      // TouchDataAddress
-                          0,      // ChecksumAddress
-                          0,      // FlashDataAddress
-                          NULL,   // I2cController
-                          FALSE,  // StateChanged
-                          NULL,   // NvtDevice
-                          NULL,   // ControllerNameTable
-                          NULL,   // Buf
-                          {0},    // LastPointData
-                          FALSE,  // IsBusy
-                          0,      // CurrentSlaveAddress
-                          {0},    // IdInfo
-                          0,      // EventBufAddr
-                          0,      // LastPacketId
-                          FALSE,  // IsTouched
-                          0,      // IrqHighCount
-                          FALSE,  // FirmwareBroken
-                          NULL,   // MemMap
-                          {0},    // TuningConfig
-                          0,      // CurrentMode
-                          0,      // CarrierSystem
-                          -1,     // LastSdaLevel
-                          -1,     // LastSclLevel
-                          0,      // DroppedEvents
-                          0,      // MaxPollDuration
-                          0,      // LastPollTime
-                          0,      // I2cRetries
-                          FALSE,  // IsScrolling
-                          0,      // AccumulatedScrollZ
-                          0,      // LastScrollX1
-                          0,      // LastScrollY1
-                          0,      // LastScrollX2
-                          0,      // LastScrollY2
-                          -1,     // ScrollFinger1ID
-                          -1,     // ScrollFinger2ID
-                          {0},    // Watchdog
-                          {0},    // PointProtocol
-                          NULL,   // ReadyToBootEvent
-                          0       // CachedIrqConfig
+                          NULL,
+                          FALSE, // Initialized
+                          0,     // TouchDataAddress
+                          0,     // ChecksumAddress
+                          0,     // FlashDataAddress
+                          NULL,  // I2cController
+                          FALSE, // StateChanged
+                          NULL,  // NvtDevice
+                          NULL,  // ControllerNameTable
+                          NULL,  // Buf
+                          {0},   // LastPointData
+                          FALSE, // IsBusy
+                          0,     // CurrentSlaveAddress
+                          {0},   // IdInfo
+                          0,     // EventBufAddr
+                          0,     // LastPacketId
+                          FALSE, // IsTouched
+                          0,     // IrqHighCount
+                          FALSE, // FirmwareBroken
+                          NULL,  // MemMap
+                          {0},   // TuningConfig
+                          0,     // CurrentMode
+                          0,     // CarrierSystem
+                          -1,    // LastSdaLevel
+                          -1,    // LastSclLevel
+                          0,     // DroppedEvents
+                          0,     // MaxPollDuration
+                          0,     // LastPollTime
+                          0,     // I2cRetries
+                          FALSE, // IsScrolling
+                          0,     // AccumulatedScrollZ
+                          0,     // LastScrollX1
+                          0,     // LastScrollY1
+                          0,     // LastScrollX2
+                          0,     // LastScrollY2
+                          -1,    // ScrollFinger1ID
+                          -1,    // ScrollFinger2ID
+                          {0},   // Watchdog
+                          {0},   // PointProtocol
+                          NULL,  // ReadyToBootEvent
+                          0      // CachedIrqConfig
 },
                   *gNvtI2CInstance;
 
@@ -1198,6 +1325,26 @@ NvtInitialize(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
       ImageHandle, SystemTable, &gNvtDriverBinding, ImageHandle,
       &gNvtDriverComponentName, &gNvtDriverComponentName2);
   ASSERT_EFI_ERROR(Status);
+
+  // 1. Create Periodic Timer Event (Every 500ms)
+  // Status = gBS->CreateEvent(
+  //     EVT_TIMER | EVT_NOTIFY_SIGNAL, TPL_CALLBACK, StickyFixTimerHandler, NULL,
+  //     &mStickyFixTimerEvent);
+
+  // if (!EFI_ERROR(Status)) {
+  //   Status = gBS->SetTimer(
+  //       mStickyFixTimerEvent, TimerPeriodic,
+  //       5000000); // 500ms in 100ns units
+  // }
+
+  // // 2. Register ExitBootServices Callback (Final Fix & Stop)
+  // Status = gBS->CreateEvent(
+  //     EVT_SIGNAL_EXIT_BOOT_SERVICES, TPL_NOTIFY, StickyFixExitBootServices,
+  //     NULL, &mStickyFixEbsEvent);
+
+  // DEBUG(
+  //     (EFI_D_ERROR,
+  //      "NVT: [STICKY FIX] Background Timer and EBS Hook Registered.\n"));
 
   return EFI_SUCCESS;
 }
@@ -1780,6 +1927,28 @@ VOID NvtDrainBuffer(NVT_INTERNAL_DATA *Instance)
 
 // ==================== PROTOCOL IMPLEMENTATION ====================
 
+/**
+ * Dumps the exact Qualcomm SDHCI VSR and DLL initialization values
+ * while the system is running, so we can see what the UEFI is using.
+ */
+// VOID EFIAPI
+// NvtDumpSdhciRegisters(IN EFI_EVENT Event, IN VOID *Context)
+// {
+//   // SM6150 SDC1 (eMMC) Base Address
+//   UINTN Sdc1Base = 0x007C4000;
+
+//   // MmioRead32 is from Library/IoLib.h
+//   UINT32 DllConfig = MmioRead32(Sdc1Base + 0x0200);
+//   UINT32 VendorSpec = MmioRead32(Sdc1Base + 0x020C);
+//   UINT32 VendorSpec3 = MmioRead32(Sdc1Base + 0x0250);
+
+//   DEBUG(
+//       (EFI_D_ERROR,
+//        "SDHCI_DUMP: [0x0200 DLL_CONFIG]=0x%08X | \n[0x020C
+//        VENDOR_SPEC]=0x%08X | \n[0x0250 VENDOR_SPEC3]=0x%08X\n", DllConfig,
+//        VendorSpec, VendorSpec3));
+// }
+
 EFI_STATUS EFIAPI NvtGetDiagnostics(
     IN NOVATEK_TOUCH_CONFIG_PROTOCOL *This,
     OUT NOVATEK_TOUCH_DIAGNOSTICS    *Diagnostics)
@@ -1817,7 +1986,496 @@ EFI_STATUS EFIAPI NvtResetController(IN NOVATEK_TOUCH_CONFIG_PROTOCOL *This)
   return NvtBootloaderReset(Instance);
 }
 
+VOID HijackIOMMUStreamMapping(UINT16 TargetStreamId)
+{
+  UINT32 SmrOffset  = SMMU_BASE + SMMU_SMR0_OFFSET;
+  UINT32 S2crOffset = SMMU_BASE + SMMU_S2CR0_OFFSET;
+  UINT32 FoundIndex = 0xFFFFFFFF;
+
+  // 1. SEARCH EXISTING SMRs (Snapdragon usually has 128 SMRs)
+  for (UINT32 i = 0; i < 128; i++) {
+    UINT32 SmrVal = MmioRead32(SmrOffset + (i * 4));
+
+    if (SmrVal & SMMU_SMR_VALID) {
+      // Extract the 15-bit ID and 15-bit MASK from the SMR
+      UINT16 Id   = SmrVal & 0x7FFF;
+      UINT16 Mask = (SmrVal >> 16) & 0x7FFF;
+
+      // ARM SMMU Match Formula: (Incoming_ID & ~MASK) == (SMR_ID & ~MASK)
+      if ((TargetStreamId & ~Mask) == (Id & ~Mask)) {
+        DEBUG(
+            (EFI_D_ERROR,
+             "[SMMU] Found existing SMR for StreamID 0x%x at Index %d "
+             "(ID:0x%x, MASK:0x%x)\n",
+             TargetStreamId, i, Id, Mask));
+        FoundIndex = i;
+        break; // Stop at the first match to prevent our own double-matches
+      }
+    }
+  }
+
+  if (FoundIndex == 0xFFFFFFFF) {
+    DEBUG(
+        (EFI_D_ERROR,
+         "[SMMU] CRITICAL: HalIommu did not map 0x%x! Cannot hijack.\n",
+         TargetStreamId));
+    return;
+    // Note: If you reach here, you CAN safely fallback to your old code to
+    // create a new SMR
+  }
+
+  // 2. HIJACK THE S2CR TO BYPASS
+  // We leave the SMR completely untouched so we don't break the mask or cause
+  // collisions. We just tell the SMMU: "Whatever hits this SMR, bypass the
+  // translation."
+
+  // Type 1 is BYPASS (S2CR_TYPE_BYPASS << 16)
+  MmioWrite32(S2crOffset + (FoundIndex * 4), (1 << 16));
+
+  DEBUG(
+      (EFI_D_ERROR, "[SMMU] Hijacked S2CR[%d] to BYPASS for StreamID 0x%x\n",
+       FoundIndex, TargetStreamId));
+  MicroSecondDelay(5000000);
+}
+
 // =================================================================
+
+// Dump SMMU Stream Match Registers
+// Non-Intrusive SMMU Fault Monitor
+// Dumps SMRs and checks for faults in Global and Context Bank registers.
+VOID EFIAPI NvtDumpSmmuRegisters(IN EFI_EVENT Event, IN VOID *Context)
+{
+  UINT32 i;
+  UINT32 val;
+  UINT32 APPS_SMMU_BASE = 0x15000000;
+
+  DEBUG(
+      (EFI_D_ERROR,
+       "\n--- SMMU HEALTH MONITOR (APPS_SMMU) ---\n"));
+
+  // 1. Check Global Fault Status (GFSR)
+  // Offset 0x48 from Base. Bits 0-7 indicate types of faults.
+  UINT32 gfsr = MmioRead32(APPS_SMMU_BASE + 0x48);
+  if (gfsr != 0) {
+    UINT32 gfar = MmioRead32(APPS_SMMU_BASE + 0x40);
+    DEBUG(
+        (EFI_D_ERROR,
+         "[!!!] GLOBAL SMMU FAULT DETECTED! GFSR: 0x%08X, GFAR: 0x%08X\n", gfsr,
+         gfar));
+    // Clear Global Fault (Write-1-to-Clear)
+    MmioWrite32(APPS_SMMU_BASE + 0x48, gfsr);
+  }
+
+  // 2. Check Context Bank Faults (Specifically SDHC Banks 0 and 1)
+  for (i = 0; i < 8; i++) { // Check first 8 banks just in case
+    UINT32 cb_base = APPS_SMMU_BASE + 0x40000 + (i * 0x1000);
+    UINT32 fsr     = MmioRead32(cb_base + 0x58);
+    if (fsr & 0x000004FF) { // Many bits indicate faults (e.g. F, SS, V, etc.)
+      UINT32 far_lo = MmioRead32(cb_base + 0x60);
+      UINT32 far_hi = MmioRead32(cb_base + 0x64);
+      DEBUG(
+          (EFI_D_ERROR, "[!!!] CB[%d] FAULT! FSR: 0x%08X, FAR: 0x%08X%08X\n", i,
+           fsr, far_hi, far_lo));
+      // Clear CB Fault
+      MmioWrite32(cb_base + 0x58, fsr);
+    }
+  }
+
+  // 3. Dump Active Stream IDs (SMRs)
+  DEBUG((EFI_D_ERROR, "--- SMR Dump ---\n"));
+  for (i = 0; i < 128; i++) {
+    val = MmioRead32(APPS_SMMU_BASE + 0x800 + (i * 4));
+    if (val & (1 << 31)) { // VALID bit
+      UINT32 mask  = (val >> 16) & 0x7FFF;
+      UINT32 id    = val & 0x7FFF;
+      UINT32 s2cr  = MmioRead32(APPS_SMMU_BASE + 0xC00 + (i * 4));
+      UINT32 type  = (s2cr >> 16) & 0x3;
+      UINT32 cbndx = s2cr & 0xFF;
+      DEBUG(
+          (EFI_D_ERROR,
+           "SMR[%03d]: SID=0x%04X, Mask=0x%04X -> S2CR: Type=%d, CB=%d\n", i,
+           id, mask, type, cbndx));
+    }
+  }
+  DEBUG((EFI_D_ERROR, "--- MONITOR FINISHED ---\n\n"));
+}
+// SMR Exclusion List (Do NOT Bypass these, as they break critical hardware like
+// Display)
+BOOLEAN IsExcludedStreamId(UINT32 StreamId)
+{
+  // Mask some IDs that might have variable bits
+  UINT32 BaseId = StreamId & 0x7FFF;
+
+  switch (BaseId) {
+  // -----------------------------------------------------
+  // DISPLAY / GPU / VIDEO (DO NOT BYPASS - CAUSES REBOOT)
+  // -----------------------------------------------------
+  case 0x14A0: // MDP/Display
+  case 0x14FA: // MDP/Display
+  case 0x1080: // GPU
+  case 0x10A0: // GPU/Display
+  case 0xC01:  // Video/MDP
+  case 0x800:  // Display (Common on QCOM)
+  case 0x801:  // Display (Common on QCOM)
+  case 0xCC0:  // Display/Video
+  case 0xCC1:  // Display/Video
+  case 0xD40:  // Display/Video
+  case 0xD41:  // Display/Video
+  case 0xD80:  // Display/Video
+  case 0xDA0:  // Display/Video
+  case 0x841:  // Potential critical system stream
+  case 0xC40:  // Rotator
+  case 0xC41:  // Rotator
+  case 0x140:  // USB SS
+  case 0xE0:   // USB HS
+  case 0xC3:   // QUP/GENI 0
+  case 0x363:  // QUP/GENI 1
+  case 0xD6:   // GPI DMA 0
+  case 0x376:  // GPI DMA 1
+  case 0x1C0:  // Passive ID / Other
+  case 0xC5:   // SMR active (Thermal/Other)
+  case 0x2B6:  // SMR active (Default/Other)
+  case 0x365:  // SMR active (Crypto/Other)
+  case 0x10A:  // SMR active (QUP/Other)
+    return TRUE;
+  default:
+    // Exclude ADSP/Audio range (0x1700 - 0x17FF)
+    if (BaseId >= 0x1700 && BaseId <= 0x17FF) {
+      return TRUE;
+    }
+    return FALSE;
+  }
+}
+#define CQE_BASE 0x007C5000
+
+VOID SetWatchDogState(BOOLEAN Enable)
+{
+  MmioWrite32(APSS_WDT_BASE + APSS_WDT_ENABLE_OFFSET, Enable);
+}
+
+VOID ConfigureIOMMUContextBankCacheSetting(
+    UINT32 ContextBankId, BOOLEAN CacheCoherent)
+{
+  UINT32 ContextBankAddr =
+      SMMU_BASE + SMMU_CTX_BANK_0_OFFSET + ContextBankId * SMMU_CTX_BANK_SIZE;
+
+  MmioWrite32(
+      ContextBankAddr + SMMU_CTX_BANK_SCTLR_OFFSET,
+      CacheCoherent ? SMMU_CCA_SCTLR : SMMU_NON_CCA_SCTLR);
+
+  MmioWrite32(ContextBankAddr + SMMU_CTX_BANK_TTBR0_0_OFFSET, 0);
+  MmioWrite32(ContextBankAddr + SMMU_CTX_BANK_TTBR0_1_OFFSET, 0);
+  MmioWrite32(ContextBankAddr + SMMU_CTX_BANK_TTBR1_0_OFFSET, 0);
+  MmioWrite32(ContextBankAddr + SMMU_CTX_BANK_TTBR1_1_OFFSET, 0);
+  MmioWrite32(ContextBankAddr + SMMU_CTX_BANK_MAIR0_OFFSET, 0);
+  MmioWrite32(ContextBankAddr + SMMU_CTX_BANK_MAIR1_OFFSET, 0);
+  MmioWrite32(ContextBankAddr + SMMU_CTX_BANK_TTBCR_OFFSET, 0);
+
+  // THE NEW FIX: Clear any leftover bootloader faults (FSR is Write-1-to-Clear)
+  MmioWrite32(ContextBankAddr + SMMU_CTX_BANK_FSR_OFFSET, 0xFFFFFFFF);
+}
+
+VOID ConfigureIOMMUStreamMapping(
+    UINT32 MappingIndex, UINT16 StreamId, UINT32 ContextBankId)
+{
+  /* 1. Program SMR (Stream Matching Register) */
+  MmioWrite32(
+      SMMU_BASE + SMMU_SMR0_OFFSET + MappingIndex * 4,
+      SMMU_SMR_VALID | (StreamId & SMMU_SMR_ID_MASK));
+
+  /* 2. Program S2CR (Stream to Context Register) to BYPASS mode */
+  MmioWrite32(
+      SMMU_BASE + SMMU_S2CR0_OFFSET + MappingIndex * 4,
+      (SMMU_S2CR_TYPE_BYPASS << 16) | (ContextBankId << SMMU_S2CR_CBNDX_SHIFT));
+
+  /* 3. Program CBAR (Context Bank Attribute Register) to BYPASS */
+  /* This marks the bank as "In Use" so the Dxe driver won't re-allocate it */
+  MmioWrite32(
+      SMMU_BASE + SMMU_GLOBAL_REGION1_OFFSET + SMMU_CBAR0_OFFSET +
+          ContextBankId * 4,
+      (SMMU_CBAR_TYPE_S1_BYPASS << 16));
+
+  /* 4. Program CBA2R (Context Bank Attribute 2 Register) for 64-bit */
+  MmioWrite32(
+      SMMU_BASE + SMMU_GLOBAL_REGION1_OFFSET + SMMU_CBA2R0_OFFSET +
+          ContextBankId * 4,
+      SMMU_CBA2R_VA64);
+}
+
+/**
+  Strictly Compliant EBS Hook
+  Assassinates Watchdog -> Executes OEM Teardowns -> Re-asserts SMMU Bypass
+**/
+EFI_STATUS
+EFIAPI
+HookedExitBootServices(IN EFI_HANDLE ImageHandle, IN UINTN MapKey)
+{
+  EFI_STATUS Status = EFI_SUCCESS;
+
+  // INVOKE ORIGINAL OEM TEARDOWNS
+  Status = mOriginalExitBootServices(ImageHandle, MapKey);
+
+  // SURGICAL INFRASTRUCTURE PRESERVATION
+  if (!EFI_ERROR(Status)) {
+    // Only perform the absolute minimum required to avoid watchdog bite
+    // or DMA stalls without hitting Hypervisor privileged registers.
+
+    // A. SURGICAL BYPASS FOR SDCC1/2 (Indices 0, 1)
+    // Directly setting bypass bits to ensure UEFI transport stays alive for
+    // WinDbg.
+    MmioWrite32(
+        SMMU_BASE + SMMU_SMR0_OFFSET + 0,
+        SMMU_SMR_VALID | (SDHC1_SID & SMMU_SMR_ID_MASK));
+    MmioWrite32(
+        SMMU_BASE + SMMU_S2CR0_OFFSET + 0,
+        (SMMU_S2CR_TYPE_BYPASS << 16) | (0 << SMMU_S2CR_CBNDX_SHIFT));
+
+    MmioWrite32(
+        SMMU_BASE + SMMU_SMR0_OFFSET + 4,
+        SMMU_SMR_VALID | (SDHC2_SID & SMMU_SMR_ID_MASK));
+    MmioWrite32(
+        SMMU_BASE + SMMU_S2CR0_OFFSET + 4,
+        (SMMU_S2CR_TYPE_BYPASS << 16) | (1 << SMMU_S2CR_CBNDX_SHIFT));
+
+    // B. CLEAR PENDING SMMU FAULTS
+    MmioWrite32(SMMU_BASE + SMMU_GFSR_OFFSET, 0xFFFFFFFF);
+
+    DEBUG(
+        (EFI_D_ERROR, "Surgical Infrastructure State Applied. "
+                      "Ready for OS.\n"));
+  }
+
+  return Status;
+}
+
+VOID EFIAPI NvtExitBootServicesEvent(IN EFI_EVENT Event, IN VOID *Context)
+{
+  UINT32 SDC1_BASE = 0x7C4000;
+  DEBUG((EFI_D_ERROR, "NVT: Exiting Boot Services\n"));
+
+  DEBUG((EFI_D_ERROR, "\n================================================\n"));
+  DEBUG((EFI_D_ERROR, "--- [SDCC HANDOFF STATE TO WINDOWS KERNEL] ---\n"));
+  DEBUG((EFI_D_ERROR, "================================================\n"));
+
+  // 1. Standard SDHC Registers (0x00 - 0x5C)
+  DEBUG((EFI_D_ERROR, "[1] SDHC STANDARD REGS\n"));
+  DEBUG(
+      (EFI_D_ERROR, "PRESENT_STATE (0x24): 0x%08x\n",
+       MmioRead32(SDC1_BASE + 0x24)));
+  DEBUG(
+      (EFI_D_ERROR, "HOST_CTL1     (0x28): 0x%02x\n",
+       MmioRead8(SDC1_BASE + 0x28)));
+  DEBUG(
+      (EFI_D_ERROR, "PWR_CTL       (0x29): 0x%02x\n",
+       MmioRead8(SDC1_BASE + 0x29)));
+  DEBUG(
+      (EFI_D_ERROR, "CLK_CTL       (0x2C): 0x%04x\n",
+       MmioRead16(SDC1_BASE + 0x2C)));
+  DEBUG(
+      (EFI_D_ERROR, "INT_STAT      (0x30): 0x%08x\n",
+       MmioRead32(SDC1_BASE + 0x30)));
+
+  // CRITICAL: Host Control 2 contains the 64-bit addressing switch
+  UINT16 HostCtl2 = MmioRead16(SDC1_BASE + 0x3E);
+  DEBUG(
+      (EFI_D_ERROR, "HOST_CTL2     (0x3E): 0x%04x [64-bit ADMA: %d]\n",
+       HostCtl2, (HostCtl2 & (1 << 13)) ? 1 : 0));
+
+  DEBUG(
+      (EFI_D_ERROR, "CAPS_ALL      (0x40): 0x%08x %08x\n",
+       MmioRead32(SDC1_BASE + 0x40), MmioRead32(SDC1_BASE + 0x44)));
+  DEBUG(
+      (EFI_D_ERROR, "ADMA_ERR      (0x54): 0x%08x\n",
+       MmioRead32(SDC1_BASE + 0x54)));
+
+  // 2. Qualcomm Vendor Specific Block (Fixed Offsets!)
+  DEBUG((EFI_D_ERROR, "\n[2] QCOM VENDOR REGS\n"));
+
+  // CRITICAL: The Hardware "Modernization" switch
+  UINT32 HcMode = MmioRead32(SDC1_BASE + 0x78);
+  DEBUG(
+      (EFI_D_ERROR, "HC_MODE       (0x78): 0x%08x [Standard Mode: %d]\n",
+       HcMode, (HcMode == 1) ? 1 : 0));
+
+  DEBUG(
+      (EFI_D_ERROR, "DLL_CONFIG   (0x114): 0x%08x\n",
+       MmioRead32(SDC1_BASE + 0x114)));
+  DEBUG(
+      (EFI_D_ERROR, "DLL_STATUS   (0x118): 0x%08x\n",
+       MmioRead32(SDC1_BASE + 0x118)));
+  DEBUG(
+      (EFI_D_ERROR, "VEND_CAP_LOK (0x21C): 0x%08x\n",
+       MmioRead32(SDC1_BASE + 0x21C)));
+  DEBUG(
+      (EFI_D_ERROR, "VENDOR_FUNC  (0x50C): 0x%08x\n",
+       MmioRead32(SDC1_BASE + 0x50C)));
+
+  // 3. CMDQ (Command Queue) Block
+  DEBUG((EFI_D_ERROR, "\n[3] CQE/CMDQ REGS\n"));
+  DEBUG(
+      (EFI_D_ERROR, "CQCAP        (0x1000): 0x%08x\n",
+       MmioRead32(SDC1_BASE + 0x1000)));
+
+  // Check if CMDQ is enabled
+  UINT32 CqCfg = MmioRead32(SDC1_BASE + 0x1008);
+  DEBUG(
+      (EFI_D_ERROR, "CQCFG        (0x1008): 0x%08x [CMDQ Enabled: %d]\n", CqCfg,
+       (CqCfg & 1)));
+
+  DEBUG(
+      (EFI_D_ERROR, "CQIS         (0x1010): 0x%08x\n",
+       MmioRead32(SDC1_BASE + 0x1010)));
+  DEBUG(
+      (EFI_D_ERROR, "CQTERRI      (0x1050): 0x%08x (0 = Clean)\n",
+       MmioRead32(SDC1_BASE + 0x1050)));
+
+  DEBUG((EFI_D_ERROR, "================================================\n\n"));
+
+  // 1. KILL THE CLOCK & RESET THE PHY DLL (Using v4 offsets to retrace)
+  // MmioWrite32(SDC1_BASE + 0x114, 0x00000000); // DLL_CONFIG
+  // MicroSecondDelay(1000);
+  // MmioWrite32(SDC1_BASE + 0x118, 0x00000000); // DLL_STATUS
+  // MicroSecondDelay(1000);
+
+  // // 2. THE NUCLEAR RESET (Retracing to 0x508 - VENDOR_SPEC_FUNC2)
+  // UINT32 VendFunc2 = MmioRead32(SDC1_BASE + 0x508);
+  // VendFunc2 |= (1 << 21) | (1 << 20);
+  // MmioWrite32(SDC1_BASE + 0x508, VendFunc2);
+  // MicroSecondDelay(1000);
+
+  // // 3. FORCE HLOS MODE & BIT 13 (Retracing to 0x78 - HC_MODE)
+  // MmioWrite32(SDC1_BASE + 0x78, 0x00002001);
+  // MicroSecondDelay(1000);
+
+  // // 4. ENABLE 64-BIT & HOST V4 (0x3C)
+  // UINT32 HostCtl2_Val = MmioRead32(SDC1_BASE + 0x3C);
+  // HostCtl2_Val |= (1 << 29) | (1 << 28); // Bit 29=64bit, Bit 28=V4
+  // MmioWrite32(SDC1_BASE + 0x3C, HostCtl2_Val);
+  // MicroSecondDelay(1000);
+
+  // // 5. SANITIZE CQE (0x1000 range - This is the same for v4/v5)
+  // MmioWrite32(SDC1_BASE + 0x1008, 0x00000000); // CQCFG: Disable CQE
+  // MicroSecondDelay(1000);
+  // MmioWrite32(SDC1_BASE + 0x1010, 0xFFFFFFFF); // CQIS: Clear interrupts
+  // MicroSecondDelay(1000);
+  // MmioWrite32(SDC1_BASE + 0x1050, 0x00000000); // CQTERRI: Clear Errors
+  // MicroSecondDelay(1000);
+
+  // // 6. LOCK VENDOR CAPABILITIES (v5 Offset: 0x21C)
+  // // Commented out as requested
+  // /*
+  // UINT32 Caps0 = MmioRead32(SDC1_BASE + 0x21C);
+  // Caps0 |= (1U << 31);
+  // MmioWrite32(SDC1_BASE + 0x21C, Caps0);
+  // MicroSecondDelay(1000);
+  // */
+
+  // // 7. RESTORE CLOCK (0x2C)
+  // // Retracing to 400KHz safety handoff
+  // MmioWrite16(SDC1_BASE + 0x2C, 0x0007);
+  // MicroSecondDelay(1000);
+
+  // // 8. STABILIZE VENDOR TUNING (Retracing to 0x50C)
+  // MmioWrite32(SDC1_BASE + 0x50C, 0x00000060);
+  // MicroSecondDelay(1000);
+
+  // // --- INITIAL STICKY FIX APPLICATION ---
+  // // The background timer will take over from here.
+  // StickyFixTimerHandler(NULL, NULL);
+  // DEBUG(
+  //     (EFI_D_ERROR, "NVT: [STICKY FIX] Initial application complete. "
+  //                   "Background timer is active.\n"));
+
+  // MmioWrite32(0x007C5008, 0x00000000);
+
+  // MmioWrite32(0x007C8068, 0x00000000);
+
+  // MmioWrite32(0x15000800, 0xFFFFFFFF);
+
+  // MmioWrite32(0x15000DDC, 0x00010000);
+
+  // MmioWrite32(0x15000810, 0x800F0060);
+
+  // MmioWrite32(0x15000C10, 0x00010000);
+
+  // MmioWrite32(0x15000814, 0x8000094C);
+
+  // MmioWrite32(0x15000C14, 0x00010000);
+
+  // MmioWrite8(0x007C4029, 0x0B);
+
+  // UINT16 ClockCtrl = MmioRead16(0x007C402C);
+  // MmioWrite16(0x007C402C, ClockCtrl | 0x0004);
+
+  // SetWatchDogState(FALSE);
+  // ------------------------------------------------------------------------
+  // SMMU BYPASS RE-ASSERTION (POST-EBS)
+  // ------------------------------------------------------------------------
+  // The OEM driver might have re-enabled the SMMU or cleared our bypass
+  // settings. We re-apply the bypass to ensure the eMMC is still accessible in
+  // the OS.
+
+  // 1. Re-configure Context Bank Cache Settings (Set to Non-CCA)
+  // ConfigureIOMMUContextBankCacheSetting(SDHC1_CTX_BANK, TRUE);
+
+  // 2. Re-configure Stream Mapping (Set to Bypass Mode)
+  // ConfigureIOMMUStreamMapping(0, SDHC1_SID, SDHC1_CTX_BANK);
+
+  // ------------------------------------------------------------------------
+  // in development - dont  remove !!
+  // UINT32              RegVal;
+  // UINT32              Timeout;
+
+  // // 1. ASSASSINATE ICE AND CQE
+  // // Write 0 to disable ICE, and also write 0 to ICE_RESET to ensure it's not
+  // in a stuck sequence. MmioWrite32(0x007C8000, 0x00000000); // ICE_CONTROL =
+  // Disable MmioWrite32(0x007C8004, 0x00000000); // ICE_RESET = Clear
+  // MmioWrite32(0x007C5008, 0x00000000); // Disable CQE (CQCFG, clear CQ_EN)
+
+  // // 2. DISABLE FREEDOM FREQUENCY CLOCK RESET (Bit 13 of 0x7C4078)
+  // // This prevents the hardware from clearing clock configs during targeted
+  // resets. RegVal = MmioRead32(0x007C4078); RegVal |= (1 << 13);
+  // MmioWrite32(0x007C4078, RegVal);
+
+  // // 3. CLEAR THE STUCK RESETS (Bits 24-27 in 0x7C402C)
+  // RegVal = MmioRead32(0x007C402C);
+  // RegVal &= ~(0x0F000000);
+  // MmioWrite32(0x007C402C, RegVal);
+
+  // // 4. TURN ON INTERNAL CLOCK & SET TIMEOUT COUNTER
+  // RegVal = MmioRead32(0x007C402C);
+  // RegVal |= 0x000E0000;  // Restore the 0x0E Timeout Counter!
+  // RegVal |= 0x00000001;  // Set Bit 0 (Internal Clock Enable)
+  // MmioWrite32(0x007C402C, RegVal);
+
+  // // 5. WAIT FOR HARDWARE TO STABILIZE
+  // Timeout = 100000;
+  // while (((MmioRead32(0x007C402C) & 0x00000002) == 0) && (Timeout > 0)) {
+  //     gBS->Stall(10);
+  //     Timeout--;
+  // }
+
+  // // 6. ENABLE SD CLOCK AND PLL TO THE CHIP
+  // RegVal = MmioRead32(0x007C402C);
+  // RegVal |= 0x0000000C;  // Set Bit 2 (SD Clock) and Bit 3 (PLL)
+  // MmioWrite32(0x007C402C, RegVal);
+
+  // // 7. POWER ON THE BUS PROPERLY (1.8V VCCQ)
+  // RegVal = MmioRead32(0x007C4028);
+  // RegVal &= ~(0x0000FF00);
+  // RegVal |= 0x00000B00;
+  // MmioWrite32(0x007C4028, RegVal);
+
+  // // 8. VENDOR CAPABILITY LOCK
+  // // Apply to both 0x11C and 0x21C ranges to cover all SDCC V5 variants.
+  // RegVal = MmioRead32(0x007C411C);
+  // RegVal |= 0x80000000;
+  // MmioWrite32(0x007C411C, RegVal);
+
+  // RegVal = MmioRead32(0x007C421C);
+  // RegVal |= 0x80000000;
+  // MmioWrite32(0x007C421C, RegVal);
+}
 
 EFI_STATUS EFIAPI NvtAbsolutePointerDriverBindingStart(
     IN EFI_DRIVER_BINDING_PROTOCOL *This, IN EFI_HANDLE Controller,
@@ -1827,16 +2485,6 @@ EFI_STATUS EFIAPI NvtAbsolutePointerDriverBindingStart(
   NOVATEK_I2C_DEVICE *NvtDeviceIo;
   NVT_INTERNAL_DATA  *Instance;
   UINT32              IrqConfig, ResetConfig;
-
-  // Status = gBS->CreateEvent(
-  //     EVT_NOTIFY_SIGNAL | EVT_TIMER, TPL_CALLBACK, NvtI2cScannerCallback,
-  //     Instance, &mScannerTimerEvent);
-
-  // if (!EFI_ERROR(Status)) {
-  //   gBS->SetTimer(
-  //       mScannerTimerEvent, TimerPeriodic,
-  //       5000000); // 5 seconds in 100ns units
-  // }
 
   // DEBUG((EFI_D_ERROR, "=== NVT DRIVER START (BROKEN FW MODE) ===\n"));
 
@@ -2032,6 +2680,28 @@ EFI_STATUS EFIAPI NvtAbsolutePointerDriverBindingStart(
       &Instance->SimplePointerProtocol.WaitForInput);
   ASSERT_EFI_ERROR(Status);
 
+  //Create a 5-second periodic timer to dump SMMU registers
+  // Status = gBS->CreateEvent(
+  //     EVT_TIMER | EVT_NOTIFY_SIGNAL, TPL_CALLBACK, NvtDumpSmmuRegisters,
+  //     Instance, &Instance->SmmuDumpTimerEvent);
+  // ASSERT_EFI_ERROR(Status);
+
+  // if (!EFI_ERROR(Status)) {
+  //   // 1,000,000 = 1 second
+  //   gBS->SetTimer(Instance->SmmuDumpTimerEvent, TimerPeriodic, 500000000);
+  // }
+
+  // //Register SMMU Bypass to run right before Windows takes over
+  // EFI_EVENT ExitBootServicesEvent;
+  // Status = gBS->CreateEvent(
+  //     EVT_SIGNAL_EXIT_BOOT_SERVICES, TPL_NOTIFY, NvtExitBootServicesEvent, NULL,
+  //     &ExitBootServicesEvent);
+  // if (EFI_ERROR(Status)) {
+  //   DEBUG(
+  //       (EFI_D_ERROR,
+  //        "NVT: Failed to create ExitBootServices Event for SMMU Bypass!\n"));
+  // }
+
   Status = gBS->InstallMultipleProtocolInterfaces(
       &Controller, &gEfiAbsolutePointerProtocolGuid,
       &Instance->AbsPointerProtocol, &gNovatekTouchConfigProtocolGuid,
@@ -2040,10 +2710,7 @@ EFI_STATUS EFIAPI NvtAbsolutePointerDriverBindingStart(
 
   if (!EFI_ERROR(Status)) {
     AbsStartPolling(Instance);
-
-    // Initialize I2C Bus Scanner (Every 5 seconds)
-
-    DEBUG((EFI_D_INFO, "NVT: Driver started successfully!\n"));
+    // DEBUG((EFI_D_ERROR, "NVT: Driver started successfully!\n"));
   }
 
   return Status;
@@ -2098,6 +2765,12 @@ NvtAbsolutePointerDriverBindingStop(
   gBS->CloseEvent(Instance->PollingTimerEvent);
   gBS->CloseEvent(Instance->AbsPointerProtocol.WaitForInput);
   gBS->CloseEvent(Instance->SimplePointerProtocol.WaitForInput);
+
+  if (Instance->SmmuDumpTimerEvent != NULL) {
+    gBS->SetTimer(Instance->SmmuDumpTimerEvent, TimerCancel, 0);
+    gBS->CloseEvent(Instance->SmmuDumpTimerEvent);
+    Instance->SmmuDumpTimerEvent = NULL;
+  }
 
   Status = gBS->OpenProtocol(
       Controller, &gNovatekTouchDeviceProtocolGuid, (VOID **)&NvtDeviceIo,
@@ -2325,39 +2998,6 @@ VOID NvtProcessGesture(NVT_INTERNAL_DATA *Instance)
   }
 }
 
-// ==================== I2C BUS SCANNER ====================
-
-// VOID EFIAPI NvtI2cScannerCallback(IN EFI_EVENT Event, IN VOID *Context)
-// {
-//   EFI_STATUS             Status;
-//   EFI_QCOM_I2C_PROTOCOL *I2cProtocol;
-//   I2C_STATUS             I2cStatus;
-//   VOID                  *Handle;
-//   UINT32                 i;
-
-//   Status =
-//       gBS->LocateProtocol(&gQcomI2cProtocolGuid, NULL, (VOID
-//       **)&I2cProtocol);
-//   if (EFI_ERROR(Status)) {
-//     return;
-//   }
-
-//   // Use EFI_D_ERROR to ensure visibility on display if redirects are active
-//   DEBUG((EFI_D_ERROR, "\n--- [I2C SCANNER] BUS DISCOVERY START ---\n"));
-
-//   for (i = 1; i <= 16; i++) {
-//     I2cStatus = I2cProtocol->Open(i, &Handle);
-//     if (I2cStatus == I2C_SUCCESS) {
-//       DEBUG((EFI_D_ERROR, "I2C Bus Instance %02d: FOUND\n", i));
-//       I2cProtocol->Close(Handle);
-//     }
-//   }
-
-//   DEBUG((EFI_D_ERROR, "--- [I2C SCANNER] BUS DISCOVERY END ---\n\n"));
-// }
-
-// =========================================================
-
 /**
   Polling Callback (Timer)
 
@@ -2537,11 +3177,11 @@ EFI_STATUS AbsPGetState(
       // Check if same credentials (stuck?)
       // If stuck for 5 seconds
       if (Delta > (Freq * 5)) {
-        DEBUG(
-            (EFI_D_ERROR,
-             "NVT: Watchdog Triggered! Stuck Touch? Resetting...\n"));
+        // DEBUG(
+        //     (EFI_D_ERROR,
+        //      "NVT: Watchdog Triggered! Stuck Touch? Resetting...\n"));
         // Force Reset
-        NvtBootloaderReset(Instance);
+        // NvtBootloaderReset(Instance);
       }
       else {
         Instance->Watchdog.Active = FALSE;
@@ -2646,35 +3286,72 @@ VOID NvtConfigI2cPins(NVT_INTERNAL_DATA *Instance)
 
   @param ClockProtocol Pointer to Clock Protocol
 **/
-VOID NvtDumpClocks(EFI_CLOCK_PROTOCOL *ClockProtocol)
+VOID NvtDumpClocks()
 {
-  UINTN        ClockId;
-  BOOLEAN      IsEnabled = FALSE;
-  BOOLEAN      IsOn      = FALSE;
-  UINT32       Freq      = 0;
-  CONST CHAR8 *Clocks[]  = {
-      "gcc_qupv3_wrap0_core_2x_clk",  "gcc_qupv3_wrap0_core_clk",
-      "gcc_qupv3_wrap_0_m_ahb_clk",   "gcc_qupv3_wrap_0_s_ahb_clk",
-      "gcc_qupv3_wrap0_s0_clk",       "gcc_qupv3_wrap0_s1_clk",
-      "gcc_sys_noc_cpuss_ahb_clk",    "gcc_cpuss_ahb_clk",
-      "gcc_qspi_cnoc_periph_ahb_clk", NULL};
+  EFI_CLOCK_PROTOCOL *ClockProtocol;
+  EFI_STATUS          Status;
+  UINT32              FreqHz;
+  UINTN               ClockId;
 
-  // DEBUG((EFI_D_ERROR, "\n--- NVT Clock Dump ---\n"));
-  for (int i = 0; Clocks[i] != NULL; i++) {
-    if (!EFI_ERROR(
-            ClockProtocol->GetClockID(ClockProtocol, Clocks[i], &ClockId))) {
-      ClockProtocol->IsClockEnabled(ClockProtocol, ClockId, &IsEnabled);
-      ClockProtocol->IsClockOn(ClockProtocol, ClockId, &IsOn);
-      ClockProtocol->GetClockFreqHz(ClockProtocol, ClockId, &Freq);
-      DEBUG(
-          (EFI_D_ERROR, "%a enabled: %d on: %d freq: %d hz\n", Clocks[i],
-           IsEnabled, IsOn, Freq));
-    }
-    else {
-      // DEBUG((EFI_D_ERROR, "%a : Not Found\n", Clocks[i]));
-    }
+  Status = gBS->LocateProtocol(
+      &gEfiClockProtocolGuid, NULL, (VOID **)&ClockProtocol);
+
+  if (EFI_ERROR(Status)) {
+    DEBUG((EFI_D_ERROR, "NVT: Failed to get clock protocol\n"));
+    return;
   }
-  // DEBUG((EFI_D_ERROR, "----------------------\n"));
+
+  // Status = ClockProtocol->GetClockID(ClockProtocol, "gcc_sdcc1_ice_core_clk",
+  // &ClockId);
+
+  // if (EFI_ERROR(Status)) {
+  //    DEBUG((EFI_D_ERROR, "NVT: Failed to get clock ID\n"));
+  //     return;
+  // }
+  // else{
+  //   DEBUG((EFI_D_ERROR, "NVT: Clock ID: %d\n", ClockId));
+  //   // MicroSecondDelay(2000000);
+  // }
+
+  // // Force it ON
+  // Status = ClockProtocol->EnableClock(ClockProtocol, ClockId);
+
+  // if (EFI_ERROR(Status)) {
+  //    DEBUG((EFI_D_ERROR, "NVT: Failed to enable clock\n"));
+  //     return;
+  // }
+  // else{
+  //   DEBUG((EFI_D_ERROR, "NVT: Clock enabled\n"));
+  //   // MicroSecondDelay(2000000);
+  // }
+  // MicroSecondDelay(1000);
+  // // Request exactly 75 MHz
+  // FreqHz = 50000000;
+  // Status = ClockProtocol->SetClockFreqHz(ClockProtocol, ClockId, FreqHz,
+  // EFI_CLOCK_FREQUENCY_HZ_CLOSEST, &FreqHz);
+
+  // if (EFI_ERROR(Status)) {
+  //    DEBUG((EFI_D_ERROR, "NVT: Failed to set clock frequency\n"));
+  //     return;
+  // }
+  // else{
+  //   DEBUG((EFI_D_ERROR, "NVT: Clock frequency set to %d Hz\n", FreqHz));
+  //   // MicroSecondDelay(2000000);
+  // }
+  ClockProtocol->GetClockID(ClockProtocol, "gcc_sdcc1_apps_clk", &ClockId);
+  FreqHz = 200000000;
+  ClockProtocol->SetClockFreqHz(
+      ClockProtocol, ClockId, FreqHz, EFI_CLOCK_FREQUENCY_HZ_CLOSEST, &FreqHz);
+  MicroSecondDelay(1000);
+
+  ClockProtocol->GetClockID(ClockProtocol, "gcc_sdcc1_ahb_clk", &ClockId);
+  ClockProtocol->EnableClock(ClockProtocol, ClockId);
+
+  // Enable the ICE core clock to prevent an AXI bus hang when EBS writes to ICE
+  // registers. MUST remain enabled because ClockDxe deinits at EBS, so we can't
+  // enable it later!
+  ClockProtocol->GetClockID(ClockProtocol, "gcc_sdcc1_ice_core_clk", &ClockId);
+  ClockProtocol->EnableClock(ClockProtocol, ClockId);
 }
 // -------------------------
 
@@ -3178,10 +3855,10 @@ NvtPowerUpController(NVT_INTERNAL_DATA *Instance)
           MicroSecondDelay(200);
 
           // Force S_AHB CBCR Enable just in case (0x117008)
-          MmioOr32(GCC_QUPV3_WRAP_0_S_AHB_CBCR, BIT(0));
+          MmioOr32(GCC_QUPV3_WRAP_0_S_AHB_CBCR, BIT0);
 
           // Enable S1 CBCR (0x117274)
-          MmioOr32(GCC_QUPV3_WRAP0_S1_CBCR, BIT(0));
+          MmioOr32(GCC_QUPV3_WRAP0_S1_CBCR, BIT0);
         }
       }
     }
@@ -3192,7 +3869,7 @@ NvtPowerUpController(NVT_INTERNAL_DATA *Instance)
 
   // ALSO Write to S1 CBCR (0x117274) - Some platforms need this even
   // if voted
-  MmioOr32(GCC_QUPV3_WRAP0_S1_CBCR, BIT(0));
+  MmioOr32(GCC_QUPV3_WRAP0_S1_CBCR, BIT0);
 
   UINT32 S1Cbcr = MmioRead32(GCC_QUPV3_WRAP0_S1_CBCR);
   DEBUG(
@@ -3232,9 +3909,9 @@ NvtPowerUpController(NVT_INTERNAL_DATA *Instance)
 
   // Force Enable (Bit 0)
   CbcrVal = MmioRead32(CbcrAddr); // Re-read
-  if (!(CbcrVal & BIT(0))) {
+  if (!(CbcrVal & BIT0)) {
     // DEBUG((EFI_D_ERROR, "NVT: Forcing CBCR Bit 0 (Enable)...\n"));
-    MmioOr32(CbcrAddr, BIT(0));
+    MmioOr32(CbcrAddr, BIT0);
   }
 
   // Verify
@@ -3259,7 +3936,7 @@ NvtPowerUpController(NVT_INTERNAL_DATA *Instance)
   // ----------------------------
 
   // 5. DUMP STATUS
-  // NvtDumpClocks(ClockProtocol);
+  // NvtDumpClocks();
 
   // Pin Sanity check
   ResetLine = PcdGet32(PcdNvtTouchGpioRst);

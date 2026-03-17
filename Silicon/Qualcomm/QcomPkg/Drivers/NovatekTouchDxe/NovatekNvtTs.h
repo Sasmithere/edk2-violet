@@ -227,6 +227,7 @@ typedef struct _NVT_INTERNAL_DATA {
 
   EFI_EVENT                     PollingTimerEvent;
   EFI_EVENT                     TouchWorkerEvent;
+  EFI_EVENT                     SmmuDumpTimerEvent; // [ANTIGRAVITY] Timer to dump SMMU registers
   BOOLEAN                       Initialized;
 
   UINT32 TouchDataAddress;

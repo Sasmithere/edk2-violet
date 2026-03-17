@@ -23,8 +23,8 @@
 !include Silicon/Qualcomm/QcomPkg/QcomCommonDsc.inc
 
 [PcdsFixedAtBuild.common]
-  gArmTokenSpaceGuid.PcdSystemMemoryBase|0x80000000         # Starting address
-  gArmTokenSpaceGuid.PcdSystemMemorySize|0xFDFA0000         # Limit to 4GB Size here
+  gArmTokenSpaceGuid.PcdSystemMemoryBase|0x080000000         # Starting address
+  gArmTokenSpaceGuid.PcdSystemMemorySize|0x100000000         # Limit to 4GB Size here
 
   gArmTokenSpaceGuid.PcdCpuVectorBaseAddress|0x9FF8C000     # CPU Vectors
   gArmTokenSpaceGuid.PcdArmArchTimerFreqInHz|19200000
@@ -41,22 +41,18 @@
   gQcomTokenSpaceGuid.PcdUefiMemPoolBase|0xC0000000         # DXE Heap base address
   gQcomTokenSpaceGuid.PcdUefiMemPoolSize|0x0E000000         # UefiMemorySize, DXE heap size
   gQcomTokenSpaceGuid.PcdMipiFrameBufferAddress|0x9C000000
-  
-  gQcomTokenSpaceGuid.PcdDebugUartPortBase|0x880000 #crashes on a800000 , 0xa8c000
 
   gArmPlatformTokenSpaceGuid.PcdCoreCount|8
   gArmPlatformTokenSpaceGuid.PcdClusterCount|2
+
+  gQcomTokenSpaceGuid.PcdDebugUartPortBase|0x880000
 
   #
   # SimpleInit
   #
   gSimpleInitTokenSpaceGuid.PcdDeviceTreeStore|0x9DA00000
   gSimpleInitTokenSpaceGuid.PcdLoggerdUseConsole|FALSE
-  
-[LibraryClasses]
 
-VariablePolicyHelperLib|MdeModulePkg/Library/VariablePolicyHelperLib/VariablePolicyHelperLib.inf
-  
 [LibraryClasses.common]
   # Ported from SurfaceDuoPkg
   AslUpdateLib|Silicon/Qualcomm/QcomPkg/Library/DxeAslUpdateLib/DxeAslUpdateLib.inf
@@ -64,12 +60,8 @@ VariablePolicyHelperLib|MdeModulePkg/Library/VariablePolicyHelperLib/VariablePol
   PlatformMemoryMapLib|Silicon/Qualcomm/sm6150/Library/PlatformMemoryMapLib/PlatformMemoryMapLib.inf
   PlatformPeiLib|Silicon/Qualcomm/sm6150/Library/PlatformPeiLib/PlatformPeiLib.inf
   PlatformPrePiLib|Silicon/Qualcomm/sm6150/Library/PlatformPrePiLib/PlatformPrePiLib.inf
+  MemProtectLib|Silicon/Qualcomm/sm6150/Library/MemProtectLib/MemProtectLib.inf
   MsPlatformDevicesLib|Silicon/Qualcomm/sm6150/Library/MsPlatformDevicesLib/MsPlatformDevicesLib.inf
   SOCSmbiosInfoLib|Silicon/Qualcomm/sm6150/Library/SOCSmbiosInfoLib/SOCSmbiosInfoLib.inf
 
-
-[LibraryClasses.common.DXE_RUNTIME_DRIVER]
-  VariablePolicyLib|MdeModulePkg/Library/VariablePolicyLib/VariablePolicyLibRuntimeDxe.inf
-
 [Components.common]
-

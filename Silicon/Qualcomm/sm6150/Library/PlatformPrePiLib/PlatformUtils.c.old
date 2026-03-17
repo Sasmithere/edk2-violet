@@ -1,0 +1,391 @@
+#include <Library/ArmLib.h>
+#include <Library/BaseLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/DebugLib.h>
+#include <Library/HobLib.h>
+#include <Library/IoLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/MemoryMapHelperLib.h>
+#include <Library/PcdLib.h>
+#include <Library/PlatformPrePiLib.h>
+#include <Library/PrintLib.h>
+#include <Library/SerialPortLib.h>
+
+#include "PlatformUtils.h"
+
+// --- GICv3 Definitions for SM6150 ---
+#define GICD_BASE 0x17A00000
+#define GICR_BASE 0x17A60000
+#define GICR_STRIDE 0x20000
+#define GICR_WAKER_OFFSET 0x14
+
+VOID InitializeSharedUartBuffers(VOID)
+{
+  INTN *pFbConPosition =
+      (INTN *)(FixedPcdGet32(PcdMipiFrameBufferAddress) +
+               (FixedPcdGet32(PcdMipiFrameBufferWidth) *
+                FixedPcdGet32(PcdMipiFrameBufferHeight) *
+                FixedPcdGet32(PcdMipiFrameBufferPixelBpp) / 8));
+
+  *(pFbConPosition + 0) = 0;
+  *(pFbConPosition + 1) = 0;
+}
+
+VOID UartInit(VOID)
+{
+  SerialPortInitialize();
+  InitializeSharedUartBuffers();
+  DEBUG((EFI_D_ERROR, "\n\n\n\nRenegade Project edk2-msm (AArch64)\n"));
+  DEBUG(
+      (EFI_D_ERROR, "Firmware version %s built %a %a\n\n",
+       (CHAR16 *)PcdGetPtr(PcdFirmwareVersionString), __TIME__, __DATE__));
+}
+
+/*
+VOID ConfigureIOMMUContextBankCacheSetting(
+    UINT32 ContextBankId, BOOLEAN CacheCoherent)
+{
+  UINT32 ContextBankAddr =
+      SMMU_BASE + SMMU_CTX_BANK_0_OFFSET + ContextBankId * SMMU_CTX_BANK_SIZE;
+
+  DEBUG(
+      (EFI_D_ERROR, "SMMU: Config Bank %d at 0x%x (CCA=%d)\n", ContextBankId,
+       ContextBankAddr, CacheCoherent));
+
+  MmioWrite32(
+      ContextBankAddr + SMMU_CTX_BANK_SCTLR_OFFSET,
+      CacheCoherent ? SMMU_CCA_SCTLR : SMMU_NON_CCA_SCTLR);
+  MmioWrite32(ContextBankAddr + SMMU_CTX_BANK_TTBR0_0_OFFSET, 0);
+  MmioWrite32(ContextBankAddr + SMMU_CTX_BANK_TTBR0_1_OFFSET, 0);
+  MmioWrite32(ContextBankAddr + SMMU_CTX_BANK_TTBR1_0_OFFSET, 0);
+  MmioWrite32(ContextBankAddr + SMMU_CTX_BANK_TTBR1_1_OFFSET, 0);
+  MmioWrite32(ContextBankAddr + SMMU_CTX_BANK_MAIR0_OFFSET, 0);
+  MmioWrite32(ContextBankAddr + SMMU_CTX_BANK_MAIR1_OFFSET, 0);
+  MmioWrite32(ContextBankAddr + SMMU_CTX_BANK_TTBCR_OFFSET, 0);
+}
+*/
+
+VOID SetWatchdogState(BOOLEAN Enable)
+{
+  MmioWrite32(APSS_WDT_BASE + APSS_WDT_ENABLE_OFFSET, Enable);
+}
+
+// Phase 1: Wake up all Redistributors
+VOID InitializeGICv3RedistributorWakeState(VOID)
+{
+  DEBUG((EFI_D_ERROR, "=== GICv3 GICR_WAKER Initialization ===\n"));
+
+  // SM6150 has 8 CPU cores
+  for (UINTN CpuId = 0; CpuId < 8; CpuId++) {
+    UINT64 GicrBase  = GICR_BASE + (CpuId * GICR_STRIDE);
+    UINT32 WakerAddr = (UINT32)(GicrBase + GICR_WAKER_OFFSET);
+    UINT32 Waker;
+    UINT32 Timeout = 100000;
+
+    // Read current state
+    Waker    = MmioRead32(WakerAddr);
+    UINT8 PS = (Waker & 0x1) ? 1 : 0;
+    UINT8 CA = (Waker & 0x4) ? 1 : 0;
+    DEBUG(
+        (EFI_D_ERROR, "CPU%d: WAKER=0x%X (PS=%d, CA=%d) ", CpuId, Waker, PS,
+         CA));
+
+    // Clear ProcessorSleep bit to wake the redistributor
+    if (PS == 1) {
+      Waker &= ~0x1; // Clear bit 0
+      MmioWrite32(WakerAddr, Waker);
+      DEBUG((EFI_D_ERROR, "-> Cleared PS "));
+    }
+
+    // Poll until ChildrenAsleep == 0 (fully awake)
+    while ((MmioRead32(WakerAddr) & 0x4) != 0 && Timeout-- > 0) {
+      asm volatile("nop");
+    }
+
+    if (Timeout == 0) {
+      DEBUG((EFI_D_ERROR, "TIMEOUT! CPU%d Failed to Wake.\n", CpuId));
+    }
+    else {
+      DEBUG((EFI_D_ERROR, "Awake.\n"));
+    }
+  }
+}
+
+// Phase 2: Enable Distributor
+VOID InitializeGICv3Distributor(VOID)
+{
+  UINT32 CtlrAddr = GICD_BASE; // 0x17A00000
+  UINT32 CtlrVal;
+  UINT32 Timeout;
+
+  DEBUG((EFI_D_ERROR, "=== GICv3 Distributor Init ===\n"));
+
+  // Read current state
+  CtlrVal = MmioRead32(CtlrAddr);
+  DEBUG((EFI_D_ERROR, "GICD_CTLR: 0x%08X\n", CtlrVal));
+
+  // Enable interrupt groups (Grp0 + Grp1) AND ARE_NS (Bit 5)
+  // ARE_NS=1 enables GICv3 functionality for Non-Secure.
+  // If ARE_NS=0, GICR registers are ignored.
+  CtlrVal |= 0x3;      // Enable Groups
+  CtlrVal |= (1 << 5); // Enable ARE_NS
+
+  MmioWrite32(CtlrAddr, CtlrVal);
+
+  // Wait for RWP
+  Timeout = 100000;
+  while ((MmioRead32(CtlrAddr) & 0x80000000) != 0 && Timeout-- > 0) {
+    asm volatile("nop");
+  }
+
+  // VERIFY WRITE
+  UINT32 NewCtlr = MmioRead32(CtlrAddr);
+  DEBUG(
+      (EFI_D_ERROR, "GICD_CTLR (After Write): 0x%08X (ARE_NS=%d)\n", NewCtlr,
+       (NewCtlr >> 5) & 1));
+
+  if (((NewCtlr >> 5) & 1) == 0) {
+    DEBUG((EFI_D_ERROR, "WARN: ARE_NS Failed! Legacy GICv2 Mode Active.\n"));
+
+    // --- LEGACY FALLBACK CONFIGURATION (GICD) ---
+
+    // 1. Grouping: Set GICD_IGROUPR0 (Offset 0x80) to 0xFFFFFFFF (All Group 1)
+    MmioWrite32(GICD_BASE + 0x80, 0xFFFFFFFF);
+    UINT32 GroupVerify = MmioRead32(GICD_BASE + 0x80);
+    DEBUG(
+        (EFI_D_ERROR, "Legacy: IGROUPR0 Write=MAX, Read=0x%x\n", GroupVerify));
+
+    // 2. Triggers: Set GICD_ICFGR1 (Offset 0xC04) for PPIs (16-31)
+    UINT32 Icfgr1 = MmioRead32(GICD_BASE + 0xC04);
+    DEBUG((EFI_D_ERROR, "Legacy: ICFGR1 Initial = 0x%x\n", Icfgr1));
+    UINT32 Mask = ~((1 << 21) | (1 << 23) | (1 << 27) | (1 << 29));
+    Icfgr1 &= Mask;
+    MmioWrite32(GICD_BASE + 0xC04, Icfgr1);
+    DEBUG(
+        (EFI_D_ERROR, "Legacy: ICFGR1 Final = 0x%x\n",
+         MmioRead32(GICD_BASE + 0xC04)));
+
+    // 3. Priorities: Set GICD_IPRIORITYR (Offset 0x400)
+    MmioWrite8(GICD_BASE + 0x400 + 26, 0xA0);
+    MmioWrite8(GICD_BASE + 0x400 + 27, 0xA0);
+    MmioWrite8(GICD_BASE + 0x400 + 29, 0xA0);
+    MmioWrite8(GICD_BASE + 0x400 + 30, 0xA0);
+    DEBUG((EFI_D_ERROR, "Legacy: Priorities set to 0xA0\n"));
+
+    // 4. Targets (ITARGETSR0)
+    UINT32 Target = MmioRead32(GICD_BASE + 0x800);
+    DEBUG((EFI_D_ERROR, "Legacy: ITARGETSR0 = 0x%x\n", Target));
+    // Force CPU0 target if missing
+    if ((Target & 0x01010101) == 0) {
+      MmioWrite32(GICD_BASE + 0x800, Target | 0x01010101);
+      DEBUG(
+          (EFI_D_ERROR, "Legacy: ITARGETSR0 Forced = 0x%x\n",
+           MmioRead32(GICD_BASE + 0x800)));
+    }
+
+    // 4. Usage: Enable GICD_ISENABLER0 (Offset 0x100)
+    MmioWrite32(GICD_BASE + 0x100, 0xFFFFFFFF);
+    UINT32 EnableVerify = MmioRead32(GICD_BASE + 0x100);
+    DEBUG(
+        (EFI_D_ERROR, "Legacy: ISENABLER0 Enable=MAX, Read=0x%x\n",
+         EnableVerify));
+  }
+  else {
+    DEBUG((EFI_D_ERROR, "SUCCESS: ARE_NS Enabled. GICv3 Active.\n"));
+  }
+}
+
+// Phase 3: CPU Interface
+VOID InitializeGICv3CpuInterfaceRegisters(VOID)
+{
+  UINT64 Val;
+  DEBUG((EFI_D_ERROR, "=== GICv3 CPU Interface Init ===\n"));
+
+  // 1. Enable SRE (System Register Enable) to avoid Traps
+  asm volatile("mrs %0, ICC_SRE_EL1" : "=r"(Val));
+  DEBUG((EFI_D_ERROR, "ICC_SRE_EL1 initial: 0x%lx\n", Val));
+
+  Val |= 0xF; // Enable SRE and other features
+  asm volatile("msr ICC_SRE_EL1, %0" : : "r"(Val));
+  asm volatile("isb");
+
+  // Verify
+  asm volatile("mrs %0, ICC_SRE_EL1" : "=r"(Val));
+  if ((Val & 1) == 0) {
+    DEBUG((EFI_D_ERROR, "FATAL: ICC_SRE_EL1 Failed to Enable!\n"));
+  }
+  else {
+    DEBUG((EFI_D_ERROR, "ICC_SRE_EL1 Enabled.\n"));
+  }
+
+  // 2. Unmask Priority (PMR)
+  // Fix: Set PMR to 0xFF (Allow All). Windows might assume this is set.
+  // We keep IGRPEN1 (Group 1 Enable) DISABLED to prevent PEI crash.
+  asm volatile("msr icc_pmr_el1, %0" : : "r"((UINT64)0xFF)); // Unmask All
+  asm volatile("isb");
+
+  // 3. Enable Group 1 Interrupts (IGRPEN1)
+  // CRITICAL: Required for Windows to receive interrupts.
+  // asm volatile("msr icc_igrpen1_el1, %0" : : "r"((UINT64)1));
+
+  DEBUG((EFI_D_ERROR, "CPU Interface Ready (PMR=0xFF, IGRPEN1=0).\n"));
+}
+
+// Phase 4: Enable Redistributor PPIs
+VOID EnableRedistributorPPIs(VOID)
+{
+  // Enable PPIs for CPU0 (Boot CPU) - SGI/PPI Frame is at Base + 0x10000
+  UINT32 GicrSgiBase = GICR_BASE + 0x10000;
+
+  // CRITICAL FIX: Ensure Interrupts are Group 1 (Non-Secure)
+  // If they are Group 0, they are Secure/FIQ and Windows (NS-EL1) ignores them.
+  UINT32 Igroupr0  = GicrSgiBase + 0x80;
+  UINT32 Igrpmodr0 = GicrSgiBase + 0xD00;
+
+  UINT32 CurrentGroup = MmioRead32(Igroupr0);
+  DEBUG((EFI_D_ERROR, "DIAG: GICR_IGROUPR0 (Initial) = 0x%x\n", CurrentGroup));
+
+  MmioWrite32(Igroupr0, 0xFFFFFFFF);  // All Non-Secure Group 1
+  MmioWrite32(Igrpmodr0, 0x00000000); // Helper: Ensure Group 1NS (not 1S)
+
+  // Verify Write
+  UINT32 NewGroup = MmioRead32(Igroupr0);
+  DEBUG((EFI_D_ERROR, "DIAG: GICR_IGROUPR0 (ReadBack) = 0x%x\n", NewGroup));
+
+  // Set Priorities to 0xA0 (Middle Priority, Non-Secure Safe)
+  // SM6150 uses PPIs 0, 1, 2, 3 (GSIV 16, 17, 18, 19) for Timers!
+  // Config:
+  // PPI 0 (16) -> Hypervisor
+  // PPI 1 (17) -> Secure
+  // PPI 2 (18) -> Non-Secure (Windows)
+  // PPI 3 (19) -> Virtual
+  // Set Priorities to 0xA0 (Middle Priority, Non-Secure Safe)
+  MmioWrite8(GicrSgiBase + 0x400 + 16, 0xA0);
+  MmioWrite8(GicrSgiBase + 0x400 + 17, 0xA0);
+  MmioWrite8(GicrSgiBase + 0x400 + 18, 0xA0);
+  MmioWrite8(GicrSgiBase + 0x400 + 19, 0xA0);
+
+  // CRITICAL FIX: Ensure Trigger Type is Level Sensitive (00)
+  // GICR_ICFGR1 (Offset 0xC04) controls PPIs 16-31.
+  // Each interrupt has 2 bits. Bit 1 is Edge(1)/Level(0).
+  // PPI 16: [1:0], PPI 17: [3:2], PPI 18: [5:4], PPI 19: [7:6]
+  UINT32 Icfgr1Addr = GicrSgiBase + 0xC04;
+  UINT32 Icfgr1     = MmioRead32(Icfgr1Addr);
+  DEBUG((EFI_D_ERROR, "DIAG: GICR_ICFGR1 (Initial) = 0x%x\n", Icfgr1));
+
+  // Clear bits for 16, 17, 18, 19 to force Level Sensitive (and 1-N model)
+  // Mask = ~(0b11111111) = ~(0xFF) at bit 0
+  Icfgr1 &= ~(0xFF);
+
+  MmioWrite32(Icfgr1Addr, Icfgr1);
+  DEBUG(
+      (EFI_D_ERROR, "DIAG: GICR_ICFGR1 (Forced Level) = 0x%x\n",
+       MmioRead32(Icfgr1Addr)));
+
+  // Also keep standard ones just in case (26, 27, 29, 30)
+  MmioWrite8(GicrSgiBase + 0x400 + 26, 0xA0);
+  MmioWrite8(GicrSgiBase + 0x400 + 27, 0xA0);
+  MmioWrite8(GicrSgiBase + 0x400 + 29, 0xA0);
+  MmioWrite8(GicrSgiBase + 0x400 + 30, 0xA0);
+
+  DEBUG((EFI_D_ERROR, "Set Priorities 16-19 & 26-30 to 0xA0\n"));
+
+  UINT32 IsEnableR0 = GicrSgiBase + 0x100;
+  UINT32 Val        = MmioRead32(IsEnableR0);
+  // Enable 16, 17, 18, 19 AND 26, 27, 29, 30
+  Val |= (1 << 16) | (1 << 17) | (1 << 18) | (1 << 19);
+  Val |= (1 << 26) | (1 << 27) | (1 << 29) | (1 << 30);
+  MmioWrite32(IsEnableR0, Val);
+  DEBUG((EFI_D_ERROR, "GICR (CPU0) PPIs Enabled: 0x%x\n", Val));
+}
+
+// Phase 5: Debug Pending State
+VOID DebugGICv3PendingState(VOID)
+{
+  // Check CPU0 GICR_ISPENDR0 (Offset 0x100 in SGI frame)
+  UINT32 PendingAddr = GICR_BASE + 0x10000 + 0x100; // 0x17A60000 + 10000 + 100
+  UINT32 Pending     = MmioRead32(PendingAddr);
+  DEBUG((EFI_D_ERROR, "DIAG: GICR_ISPENDR0 (CPU0) = 0x%x\n", Pending));
+
+  // Check CPU0 GICR_ISACTIVER0 (Offset 0x300 in SGI frame)
+  UINT32 ActiveAddr = GICR_BASE + 0x10000 + 0x300;
+  UINT32 Active     = MmioRead32(ActiveAddr);
+  DEBUG((EFI_D_ERROR, "DIAG: GICR_ISACTIVER0 (CPU0) = 0x%x\n", Active));
+
+  if (Active != 0) {
+    DEBUG((EFI_D_ERROR, "WARN: Stuck Active Interrupts! Clearing...\n"));
+    MmioWrite32(
+        GICR_BASE + 0x10000 + 0x380, Active); // GICR_ICACTIVER0 (Clear Active)
+    DEBUG(
+        (EFI_D_ERROR, "DIAG: Active Cleared. New State: 0x%x\n",
+         MmioRead32(ActiveAddr)));
+  }
+  else {
+    DEBUG((EFI_D_ERROR, "DIAG: No Stuck Active Interrupts\n"));
+  }
+}
+
+VOID PlatformInitialize()
+{
+  UartInit();
+  SetWatchdogState(FALSE);
+
+  // 1. Initialize Timer Frequency
+  DEBUG((EFI_D_ERROR, "Initializing Timer (19.2MHz)...\n"));
+  MmioWrite32(0x17C20020, 19200000); // Set Frequency
+  MmioWrite32(0x17C20000, 1);        // Enable Counter
+
+  // Verify Frequency before writing (Writing causes crash if Locked by EL3)
+  UINT64 CurrentFreq = ArmReadCntFrq();
+  if (CurrentFreq == 0) {
+    DEBUG((EFI_D_ERROR, "CNTFRQ is 0! Attempting to write 19.2MHz...\n"));
+    ArmWriteCntFrq(19200000);
+  }
+  else {
+    DEBUG(
+        (EFI_D_ERROR, "CNTFRQ already set: %ld. Skipping write.\n",
+         CurrentFreq));
+  }
+
+  // Debug GICR_WAKER for CPU0
+  UINT32 Waker = MmioRead32(0x17A60014); // 0x17A60000 + 0x14
+  DEBUG((EFI_D_ERROR, "GICR_WAKER (CPU0): 0x%X\n", Waker));
+  if (Waker & 2) {
+    DEBUG((EFI_D_ERROR, "ProcessorSleep is SET! Clearing it...\n"));
+    MmioWrite32(0x17A60014, Waker & ~2);
+  }
+
+  // Debug Timer Regs
+  UINT64 CntPct = ArmReadCntPct();
+  DEBUG((EFI_D_ERROR, "CONST: 19.2MHz | CNTPCT_EL0: %ld\n", CntPct));
+
+  // --- SOLUTION 2: Corrected PDC Interrupt Force Enable ---
+  // PDC Base: 0xB220000 (from DTS)
+  // IRQ_ENABLE_BANK0 Offset: 0x10 (from SDM670 Source pdc_seq_hwio.h)
+  // IRQ_ENABLE_BANK1 Offset: 0x14
+  // DEBUG((EFI_D_ERROR, "PDC: Attempting to UNFILTER all interrupts (Offset
+  // 0x10)...\n"));
+
+  // MmioWrite32(0xB220000 + 0x10, 0xFFFFFFFF);
+  // MmioWrite32(0xB220000 + 0x14, 0xFFFFFFFF);
+
+  // UINT32 Pdc0 = MmioRead32(0xB220000 + 0x10);
+  // UINT32 Pdc1 = MmioRead32(0xB220000 + 0x14);
+  // DEBUG((EFI_D_ERROR, "PDC Enable Bank0: 0x%X | Bank1: 0x%X\n", Pdc0, Pdc1));
+
+  // 2. Perform Full GICv3 Sequence
+  InitializeGICv3RedistributorWakeState(); // Wakes up Redistributor (Verified
+                                           // Works)
+  InitializeGICv3Distributor(); // FAILS (Writes ignored). Let OS handle.
+  EnableRedistributorPPIs();    // FAILS (Writes ignored). Let OS handle.
+  InitializeGICv3CpuInterfaceRegisters(); // Enables ICC_SRE_EL1 (Verified Works
+                                          // - CRITICAL)
+
+  // 3. Final Diagnostics
+  DebugGICv3PendingState();
+  DEBUG((EFI_D_ERROR, "DIAG: CurrentEL = 0x%x\n", ArmReadCurrentEL()));
+  DEBUG((EFI_D_ERROR, "DIAG: CNTFRQ_EL0 = %ld\n", ArmReadCntFrq()));
+
+  UINT64 End_Ticks = ArmReadCntPct();
+  DEBUG((EFI_D_ERROR, "Timer Ticks: %ld\n", End_Ticks));
+}

@@ -1,0 +1,29 @@
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = UsbInitDxe
+  FILE_GUID                      = 7c2e0dd6-5744-48f9-8646-6d8a3921008d
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = UsbInitEntry
+
+[Sources]
+  UsbInitDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  QcomPkg/QcomPkg.dec
+  ArmPkg/ArmPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  MemoryAllocationLib
+  BaseMemoryLib
+
+[Protocols]
+  gEfiUsbFunctionIoProtocolGuid         # consumes
+
+[Depex]
+  TRUE

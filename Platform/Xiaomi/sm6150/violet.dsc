@@ -20,6 +20,15 @@
 [BuildOptions.common]
   GCC:*_*_AARCH64_CC_FLAGS = -DENABLE_SIMPLE_INIT
   
+
+#[LibraryClasses.common.SEC]
+#  DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+
+#[LibraryClasses.common.DXE_CORE, LibraryClasses.common.DXE_DRIVER, LibraryClasses.common.UEFI_DRIVER, LibraryClasses.common.UEFI_APPLICATION, LibraryClasses.common.DXE_RUNTIME_DRIVER]
+ # DebugLib|MdeModulePkg/Library/PeiDxeDebugLibReportStatusCode/PeiDxeDebugLibReportStatusCode.inf
+
+
+  
 [PcdsFixedAtBuild.common]
 
   gQcomTokenSpaceGuid.PcdMipiFrameBufferWidth|1080
@@ -32,7 +41,16 @@
   gRenegadePkgTokenSpaceGuid.PcdDeviceProduct|"Redmi Note 7 Pro"
   gRenegadePkgTokenSpaceGuid.PcdDeviceCodeName|"violet" 
 
- 
+  
+  #gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x2F
+  #gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000004F # DEBUG_INFO|WARN|LOAD|FS|INIT|BM
+  
+  #gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x00
+  #gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x00000000 # DEBUG_INFO|WARN|LOAD|FS|INIT|BM
+  
+  gEmbeddedTokenSpaceGuid.PcdAndroidFastbootUsbVendorId|0x18d1
+  gEmbeddedTokenSpaceGuid.PcdAndroidFastbootUsbProductId|0xd00d
+
 # Produce the highest video mode in Shell and UiApp
 [PcdsDynamicDefault.common]
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|0 # /8 = column
@@ -45,10 +63,33 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|0
 
 [Components.common]
+# Silence DxeCore and CpuDxe noise (AllocatePool / UpdateRegionMapping)
+  MdeModulePkg/Core/Dxe/DxeMain.inf {
+    <PcdsFixedAtBuild>
+      # gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000002 # DEBUG_ERROR | DEBUG_WARN
+  }
+  ArmPkg/Drivers/CpuDxe/CpuDxe.inf {
+    <PcdsFixedAtBuild>
+      # gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000002 # DEBUG_ERROR | DEBUG_WARN
+  }
 
   Silicon/Qualcomm/QcomPkg/Drivers/NovatekTouchDxe/NovatekNvtTsDevice.inf
   Silicon/Qualcomm/QcomPkg/Drivers/NovatekTouchDxe/NovatekNvtTs.inf
+  extras/QcomUsbSerialDxe.inf {
+    <LibraryClasses>
+      DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+  }
   MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
+  MdeModulePkg/Universal/DebugPortDxe/DebugPortDxe.inf
+  MdeModulePkg/Universal/SerialDxe/SerialDxe.inf
+  EmbeddedPkg/Drivers/AndroidFastbootTransportUsbDxe/FastbootTransportUsbDxe.inf
+  EmbeddedPkg/Application/AndroidFastboot/AndroidFastbootApp.inf
+  EmbeddedPkg/Drivers/FdtClientDxe/FdtClientDxe.inf
+  #LogDumperDxe/LogDumperDxe.inf
+  #LogDumperApp/LogDumperApp.inf
+  #extras/QcomUsbSerialDxe.inf
+  extras/UsbInitDxe/UsbInitDxe.inf
+
   
 
 

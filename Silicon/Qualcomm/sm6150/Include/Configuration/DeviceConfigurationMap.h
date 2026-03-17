@@ -4,7 +4,7 @@
 #define CONFIGURATION_NAME_MAX_LENGTH 64
 
 typedef struct {
-  CHAR8  Name[CONFIGURATION_NAME_MAX_LENGTH];
+  CHAR8 Name[CONFIGURATION_NAME_MAX_LENGTH];
   UINT64 Value;
 } CONFIGURATION_DESCRIPTOR_EX, *PCONFIGURATION_DESCRIPTOR_EX;
 
@@ -15,7 +15,7 @@ static CONFIGURATION_DESCRIPTOR_EX gDeviceConfigurationDescriptorEx[] = {
     {"SharedIMEMBaseAddr", 0x146AA000},
     {"DloadCookieAddr", 0x01FD3000},
     {"DloadCookieValue", 0x10},
-    {"NumCpus", 8},
+    {"NumCpus", 4},
     {"NumActiveCores", 8},
     {"MaxLogFileSize", 0x400000},
     {"USBHS1_Config", 0x0},
@@ -30,7 +30,7 @@ static CONFIGURATION_DESCRIPTOR_EX gDeviceConfigurationDescriptorEx[] = {
     {"SecurityFlag", 0xC4},
     {"TzAppsRegnAddr", 0x86d00000},
     {"TzAppsRegnSize", 0x02200000},
-    {"EnableLogFsSyncInRetail", 0x1},
+    {"EnableLogFsSyncInRetail", 0x0},
     {"DetectRetailUserAttentionHotkey", 0x00},
     {"DetectRetailUserAttentionHotkeyCode", 0x17},
     {"EnableOEMSetupAppInRetail", 0x0},
@@ -39,7 +39,7 @@ static CONFIGURATION_DESCRIPTOR_EX gDeviceConfigurationDescriptorEx[] = {
     {"EarlyInitCoreCnt", 1},
     {"EnableDisplayThread", 0},
     {"AllowNonPersistentVarsInRetail", 0x1},
-    {"EnableUefiSecAppDebugLogDump", 0x1},
+    {"EnableUefiSecAppDebugLogDump", 0x0},
     {"DDRInfoNotifyFlag", 0x1},
     /* Terminator */
     {"Terminator", 0xFFFFFFFF}};

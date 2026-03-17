@@ -117,10 +117,10 @@ SMBIOS_TABLE_TYPE4 mProcessorInfoType4_a55 = {
     0,                  // ThreadCount2;
 };
 
-CHAR8 mCpuName[128] = "Qualcomm Snapdragon 730/730/732G";
+CHAR8 mCpuName[128] = "Qualcomm Snapdragon 675";
 
 CHAR8 *mProcessorInfoType4Strings[] = {
-    "BGA", "Qualcomm", "Snapdragon 730/730G/732G", NULL};
+    "BGA", "Qualcomm", "Snapdragon 675", NULL};
 
 /***********************************************************************
         SMBIOS data definition  TYPE7  Cache Information
@@ -382,7 +382,7 @@ SMBIOS_TABLE_TYPE17 mMemDevInfoType17 = {
     0xFFFE, // MemoryErrorInformationHandle; (not provided)
     64,     // TotalWidth; (unknown)
     64,     // DataWidth; (unknown)
-    0x2000, // Size; // When bit 15 is 0: Size in MB
+    0x1000, // Size; // When bit 15 is 0: Size in MB
             // When bit 15 is 1: Size in KB, and continues in ExtendedSize
             // initialized at runtime, refer to
             // PhyMemArrayInfoUpdateSmbiosType16()

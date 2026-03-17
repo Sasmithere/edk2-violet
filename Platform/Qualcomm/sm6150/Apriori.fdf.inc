@@ -50,7 +50,7 @@ APRIORI DXE {
   INF  MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
   INF  FatPkg/EnhancedFatDxe/Fat.inf
 
-  INF  Platform/EFI_Binaries/Drivers/sm6150/QcomWDogDxe/QcomWDogDxe.inf
+  #INF  Platform/EFI_Binaries/Drivers/sm6150/QcomWDogDxe/QcomWDogDxe.inf
   INF  MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
   INF  MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf
   INF  EmbeddedPkg/EmbeddedMonotonicCounter/EmbeddedMonotonicCounter.inf
@@ -64,7 +64,7 @@ APRIORI DXE {
   INF  Platform/EFI_Binaries/Drivers/sm6150/SPMIDxe/SPMIDxe.inf
   INF  Platform/EFI_Binaries/Drivers/sm6150/DDRInfoDxe/DDRInfoDxe.inf
   INF  Platform/EFI_Binaries/Drivers/sm6150/PmicDxe/PmicDxeLa.inf
-  INF  Platform/EFI_Binaries/Drivers/sm6150/QcomBds/QcomBds.inf
+  #INF  Platform/EFI_Binaries/Drivers/sm6150/QcomBds/QcomBds.inf
   
   INF  Platform/EFI_Binaries/Drivers/sm6150/PILDxe/PILDxe.inf
   INF  Platform/EFI_Binaries/Drivers/sm6150/GpiDxe/GpiDxe.inf
@@ -78,14 +78,14 @@ APRIORI DXE {
 !endif
   
   INF  Platform/EFI_Binaries/Drivers/sm6150/UsbPwrCtrlDxe/UsbPwrCtrlDxe.inf
-  INF  Platform/EFI_Binaries/Drivers/sm6150/ChargerExDxe/ChargerExDxe.inf
-  INF  Platform/EFI_Binaries/Drivers/sm6150/QcomChargerDxe/QcomChargerDxeLA.inf
+  #INF  Platform/EFI_Binaries/Drivers/sm6150/ChargerExDxe/ChargerExDxe.inf
+  #INF  Platform/EFI_Binaries/Drivers/sm6150/QcomChargerDxe/QcomChargerDxeLA.inf
   INF  Platform/EFI_Binaries/Drivers/sm6150/UsbConfigDxe/UsbConfigDxe.inf
-  INF  Platform/EFI_Binaries/Drivers/sm6150/UsbfnDwc3Dxe/UsbfnDwc3Dxe.inf
-  INF  Platform/EFI_Binaries/Drivers/sm6150/UsbDeviceDxe/UsbDeviceDxe.inf
-  INF  Platform/EFI_Binaries/Drivers/sm6150/UsbMsdDxe/UsbMsdDxe.inf
-  INF  Platform/EFI_Binaries/Drivers/sm6150/UsbInitDxe/UsbInitDxe.inf
-  INF  Platform/EFI_Binaries/Drivers/sm6150/QcomUsbSerialDxe/QcomUsbSerialDxe.inf
+  #INF  Platform/EFI_Binaries/Drivers/sm6150/UsbfnDwc3Dxe/UsbfnDwc3Dxe.inf
+  #INF  Platform/EFI_Binaries/Drivers/sm6150/UsbDeviceDxe/UsbDeviceDxe.inf
+  #INF  Platform/EFI_Binaries/Drivers/sm6150/UsbMsdDxe/UsbMsdDxe.inf
+  #INF  extras/UsbInitDxe/UsbInitDxe.inf
+  #INF  extras/QcomUsbSerialDxe.inf
   
   INF  Platform/EFI_Binaries/Drivers/sm6150/HashDxe/HashDxe.inf
   INF  Platform/EFI_Binaries/Drivers/sm6150/RNGDxe/RngDxe.inf
@@ -94,10 +94,8 @@ APRIORI DXE {
   INF  Platform/EFI_Binaries/Drivers/sm6150/ButtonsDxe/ButtonsDxe.inf
   
   INF  Platform/EFI_Binaries/Drivers/sm6150/FontDxe/FontDxe.inf
-  #INF  Silicon/Qualcomm/QcomPkg/Drivers/SimpleFbDxe/SimpleFbDxe.inf
-  INF  Platform/EFI_Binaries/Drivers/sm6150/DisplayDxe/DisplayDxe.inf
-  
-  INF  Platform/EFI_Binaries/Drivers/sm6150/EnvDxe/EnvDxe.inf
+  INF  Silicon/Qualcomm/QcomPkg/Drivers/SimpleFbDxe/SimpleFbDxe.inf
+  #INF  Platform/EFI_Binaries/Drivers/sm6150/DisplayDxe/DisplayDxe.inf
   
   INF  EmbeddedPkg/SimpleTextInOutSerial/SimpleTextInOutSerial.inf
   INF  MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
