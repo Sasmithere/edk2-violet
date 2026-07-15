@@ -22,6 +22,46 @@ Name (PCFG, Buffer (){
 <InvertHsyncPolarity>False</InvertHsyncPolarity>
 <BorderColor>0x0</BorderColor>
 </Group>
+<Group id='EDID Configuration'>
+ <ManufactureID>0x104D</ManufactureID>
+ <ProductCode>7180</ProductCode>
+ <SerialNumber>0x00001</SerialNumber>
+ <WeekofManufacture>0x01</WeekofManufacture>
+ <YearofManufacture>0x1B</YearofManufacture>
+ <EDIDVersion>1</EDIDVersion>
+ <EDIDRevision>3</EDIDRevision>
+ <VideoInputDefinition>0x80</VideoInputDefinition>
+ <HorizontalScreenSize>0x07</HorizontalScreenSize>
+ <VerticalScreenSize>0x0E</VerticalScreenSize>
+ <DisplayTransferCharacteristics>0x78</DisplayTransferCharacteristics>
+ <FeatureSupport>0x2</FeatureSupport>
+ <Red.GreenBits>0xA5</Red.GreenBits>
+ <Blue.WhiteBits>0x58</Blue.WhiteBits>
+ <RedX>0xA6</RedX>
+ <RedY>0x54</RedY>
+ <GreenX>0x33</GreenX>
+ <GreenY>0xB3</GreenY>
+ <BlueX>0x26</BlueX>
+ <BlueY>0x12</BlueY>
+ <WhiteX>0x4F</WhiteX>
+ <WhiteY>0x54</WhiteY>
+ <EstablishedTimingsI>0x0</EstablishedTimingsI>
+ <EstablishedTimingsII>0x0</EstablishedTimingsII>
+ <ManufacturesTiming>0x0</ManufacturesTiming>
+ <StandardTimings1/>
+ <StandardTimings2/>
+ <StandardTimings3/>
+ <StandardTimings4/>
+ <StandardTimings5/>
+ <StandardTimings6/>
+ <StandardTimings7/>
+ <SignalTimingInterface/>
+</Group>
+<Group id='Detailed Timing'>
+ <HorizontalScreenSizeMM>0x43</HorizontalScreenSizeMM>
+ <VerticalScreenSizeMM>0x91</VerticalScreenSizeMM>
+ <HorizontalVerticalScreenSizeMM>0x00</HorizontalVerticalScreenSizeMM>
+</Group>
 <Group id='Display Interface'>
 <InterfaceType>9</InterfaceType>
 <InterfaceColorFormat>3</InterfaceColorFormat>
@@ -47,6 +87,8 @@ Name (PCFG, Buffer (){
 <DSITimingHSPrepareOverride>True</DSITimingHSPrepareOverride>
 <DSITimingHSPrepareValue>7</DSITimingHSPrepareValue>
 <DSIEnterULPSPowerDown>True</DSIEnterULPSPowerDown>
+<DSILowPowerModeInBLLPEOF>True</DSILowPowerModeInBLLPEOF>
+<DSILowPowerModeInBLLP>True</DSILowPowerModeInBLLP>
 </Group>
 <DSIInitSequence>
 15 FF 23
@@ -86,8 +128,17 @@ Name (PCFG, Buffer (){
 05 29 00
 05 11 00
 </DSIInitSequence>
+<DSITermSequence>
+15 ff 10
+05 28
+FF 14
+05 10
+FF 78
+</DSITermSequence>
 <Group id='Backlight Configuration'>
 <BacklightType>3</BacklightType>
+<BacklightPmicControlType>2</BacklightPmicControlType>
+<DisplayResetInfo>0 10 10000 10000 0</DisplayResetInfo>
 <BacklightSteps>1</BacklightSteps>
 <BrightnessMaxLuminance>430000</BrightnessMaxLuminance>
 <BrightnessMinLuminance>323</BrightnessMinLuminance>
