@@ -12,13 +12,12 @@
   DEVICE_DXE_FV_COMPONENTS       = Platform/Xiaomi/sm6150/violet.fdf.inc
 
   # Enable A/B Slot Environment
-  AB_SLOTS_SUPPORT               = TRUE
-  USE_UART                       = 0
+  AB_SLOTS_SUPPORT               = FALSE
 
 !include Platform/Qualcomm/sm6150/sm6150.dsc
 
 [BuildOptions.common]
-  GCC:*_*_AARCH64_CC_FLAGS = -DENABLE_SIMPLE_INIT
+  GCC:*_*_AARCH64_CC_FLAGS = -DENABLE_SIMPLE_INIT 
   
 
 #[LibraryClasses.common.SEC]
@@ -66,11 +65,11 @@
 # Silence DxeCore and CpuDxe noise (AllocatePool / UpdateRegionMapping)
   MdeModulePkg/Core/Dxe/DxeMain.inf {
     <PcdsFixedAtBuild>
-      # gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000002 # DEBUG_ERROR | DEBUG_WARN
+   # gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000002 # DEBUG_ERROR | DEBUG_WARN
   }
   ArmPkg/Drivers/CpuDxe/CpuDxe.inf {
     <PcdsFixedAtBuild>
-      # gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000002 # DEBUG_ERROR | DEBUG_WARN
+   # gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000002 # DEBUG_ERROR | DEBUG_WARN
   }
 
   Silicon/Qualcomm/QcomPkg/Drivers/NovatekTouchDxe/NovatekNvtTsDevice.inf
@@ -87,7 +86,6 @@
   EmbeddedPkg/Drivers/FdtClientDxe/FdtClientDxe.inf
   #LogDumperDxe/LogDumperDxe.inf
   #LogDumperApp/LogDumperApp.inf
-  #extras/QcomUsbSerialDxe.inf
   extras/UsbInitDxe/UsbInitDxe.inf
 
   

@@ -26,27 +26,35 @@
   INF  Platform/EFI_Binaries/Drivers/sm6150/SPMIDxe/SPMIDxe.inf
   INF  Platform/EFI_Binaries/Drivers/sm6150/PmicDxe/PmicDxeLa.inf
   INF  Platform/EFI_Binaries/Drivers/sm6150/AdcDxe/AdcDxe.inf
-  #INF  Platform/EFI_Binaries/Drivers/sm6150/QcomBds/QcomBds.inf
+  INF  Platform/EFI_Binaries/Drivers/sm6150/QcomBds/QcomBds.inf
   #INF  Platform/EFI_Binaries/Drivers/sm6150/DisplayDxe/DisplayDxe.inf
   
   INF  Platform/EFI_Binaries/Drivers/sm6150/UsbPwrCtrlDxe/UsbPwrCtrlDxe.inf
-  #INF  Platform/EFI_Binaries/Drivers/sm6150/ChargerExDxe/ChargerExDxe.inf
-  #INF  Platform/EFI_Binaries/Drivers/sm6150/QcomChargerDxe/QcomChargerDxeLA.inf
-  #INF  Platform/EFI_Binaries/Drivers/sm6150/UsbfnDwc3Dxe/UsbfnDwc3Dxe.inf
+  INF  Platform/EFI_Binaries/Drivers/sm6150/ChargerExDxe/ChargerExDxe.inf
+  INF  Platform/EFI_Binaries/Drivers/sm6150/QcomChargerDxe/QcomChargerDxeLA.inf
+  INF  Platform/EFI_Binaries/Drivers/sm6150/UsbfnDwc3Dxe/UsbfnDwc3Dxe.inf
   INF  Platform/EFI_Binaries/Drivers/sm6150/UsbConfigDxe/UsbConfigDxe.inf
-  #INF  Platform/EFI_Binaries/Drivers/sm6150/UsbDeviceDxe/UsbDeviceDxe.inf
+  INF  Platform/EFI_Binaries/Drivers/sm6150/UsbDeviceDxe/UsbDeviceDxe.inf
+  #INF  extras/UsbInitDxe/UsbInitDxe.inf
+  #INF  extras/QcomUsbSerialDxe.inf
   
   INF  Platform/EFI_Binaries/Drivers/sm6150/HashDxe/HashDxe.inf
   INF  Platform/EFI_Binaries/Drivers/sm6150/RNGDxe/RngDxe.inf
   
   INF  Platform/EFI_Binaries/Drivers/sm6150/TsensDxe/TsensDxe.inf
-  #INF  Platform/EFI_Binaries/Drivers/sm6150/UsbMsdDxe/UsbMsdDxe.inf
+  INF  Platform/EFI_Binaries/Drivers/sm6150/UsbMsdDxe/UsbMsdDxe.inf
   
-  INF  Platform/EFI_Binaries/Drivers/sm6150/PILDxe/PILDxe.inf
-  INF  Platform/EFI_Binaries/Drivers/sm6150/GpiDxe/GpiDxe.inf
   INF  Platform/EFI_Binaries/Drivers/sm6150/DDRInfoDxe/DDRInfoDxe.inf
   
   INF  Platform/EFI_Binaries/Drivers/sm6150/SPI/SPI.inf
   INF  Platform/EFI_Binaries/Drivers/sm6150/FontDxe/FontDxe.inf 
+
+  INF Platform/EFI_Binaries/Drivers/sm6150/SecRSADxe/SecRSADxe.inf
+  INF Platform/EFI_Binaries/Drivers/sm6150/ASN1X509Dxe/ASN1X509Dxe.inf
+
+  INF Silicon/Qualcomm/QcomPkg/Drivers/NovatekTouchDxe/NovatekNvtTsDevice.inf
+  INF Silicon/Qualcomm/QcomPkg/Drivers/NovatekTouchDxe/NovatekNvtTs.inf
+
+  INF Platform/EFI_Binaries/Drivers/sm6150/LimitsDxe/LimitsDxe.inf
   
  

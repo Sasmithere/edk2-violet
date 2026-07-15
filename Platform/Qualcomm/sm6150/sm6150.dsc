@@ -63,5 +63,6 @@
   MemProtectLib|Silicon/Qualcomm/sm6150/Library/MemProtectLib/MemProtectLib.inf
   MsPlatformDevicesLib|Silicon/Qualcomm/sm6150/Library/MsPlatformDevicesLib/MsPlatformDevicesLib.inf
   SOCSmbiosInfoLib|Silicon/Qualcomm/sm6150/Library/SOCSmbiosInfoLib/SOCSmbiosInfoLib.inf
+  RFSProtectionLib|Silicon/Qualcomm/sm6150/Library/RFSProtectionLib/RFSProtectionLib.inf
 
 [Components.common]
