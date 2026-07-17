@@ -15,28 +15,18 @@ This project explores creating EDK2/UEFI support for the **Redmi Note 7 Pro (cod
 
 ## Personal takes 
 
-- Turns out 850 drivers are compatible with sm6150 after all (lucky me). if some are not , then i'll hex patch them anyway. I aint giving up.
-- below drivers from sdm845 currently injected in windows , and i have not found any issues yet :
-- 
-da----        15-03-2026     19:36                nt36xxx
-da----        16-03-2026     22:52                qcgpio850
-da----        16-03-2026     22:57                qci2c850
-da----        15-03-2026     19:50                qcpmic850
-da----        16-03-2026     22:53                qcpmicapps850
-da----        16-03-2026     22:53                qcpmicappsext850
-da----        15-03-2026     19:46                qcscm850
-da----        15-03-2026     19:46                qcsmmu850
-da----        16-03-2026     22:53                qcspi850
-da----        15-03-2026     19:50                qcspmi850
-da----        15-03-2026     19:50                QcTrEE850
-da----        16-03-2026     22:54                qcusbc850
-da----        16-03-2026     22:54                qcusbcucsi850
-da----        16-03-2026     22:54                qcusbfn850
-da----        16-03-2026     22:54                QcUsbFnSsFilter850
+drivers used , 95% drivers from sm8150, others were from 
+1. qcsmmu850 - due to smmu bank size
+2. qciommu850 - mutual exclusive to qcsmmu
+3. qcglink7180 - no slpi
+4. qcipa7180 - ipa version
+5. qcgsi7180 - mutually exclusive to qcipa
+6. qcpep7180 - better compatibility and heavlily patched, i had to yank out slpi and spss because sm6150 aop doesnt understand what it means,
+   replaced CBAR RGCR root clocks, halt reg and start reg of specific clocks which were mismatched , PLL fabia isnt compatible so i made it return early,
+7. qcdxkm7180 - graphics family close to a612
 
-## Currently in need
+## Currently needs development on
 
-1. To build Acpi tables to atleast draw windows gui.
-2. If possible add more drivers like cellular or wifi or bt. As far as i have seen wifi and bt are possible ,
-
+1. Software rendering
+2. gpu/graphics
 toodles
