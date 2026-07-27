@@ -73,6 +73,8 @@ bcdedit /store E:\EFI\Microsoft\Boot\BCD /set {hypervisorsettings} hypervisorbau
 bcdedit /store E:\EFI\Microsoft\Boot\BCD /set {emssettings} bootems No
 ```
 
+or just push the BCD here in the repo
+
 ## Personal takes 
 
 drivers used , 95% drivers from sm8150, others were from 
