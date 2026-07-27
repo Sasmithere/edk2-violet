@@ -13,6 +13,8 @@ DriverVer   = 01/01/2021,22.39.10.250
 CatalogFile = NvtTS.cat
 PnpLockdown = 1
 
+;FocalTechs Template is used to make this driver
+
 [DestinationDirs]
 DefaultDestDir = 13
 
