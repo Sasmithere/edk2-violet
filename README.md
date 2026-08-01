@@ -1,6 +1,6 @@
 # EDK2 for Redmi Note 7 Pro (Violet)
 
-This project explores creating EDK2/UEFI support for the **Redmi Note 7 Pro (codename: violet)** by leveraging resources from similar Snapdragon devices.  
+This project explores creating EDK2/UEFI support for the **Redmi Note 7 Pro (codename: violet)** by leveraging resources from similar Snapdragon devices.  Windows OS drivers in Development
 
 ## Current Progress
 
