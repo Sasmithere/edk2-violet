@@ -1,0 +1,306 @@
+;/*++
+;
+;Copyright (c) 2012 by QUALCOMM, Incorporated.  All Rights Reserved.
+;
+;Module Name:
+;    SMMU.inf
+;
+;Abstract:
+;    INF file for installing the Driver Frameworks SMMU Driver
+;
+;Installation Notes: 
+;    Using Devcon: Type "devcon update SMMU.inf ACPI\QCOM0200" to install
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider=%QC%
+DriverVer = 03/26/2026,1.0.10733.0000
+CatalogFile=qcsmmu850.cat
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskId%
+
+[SourceDisksFiles]
+qcsmmu850.sys = 1
+
+[ControlFlags]
+ExcludeFromSelect=*
+
+[Manufacturer]
+%QC%=QC, NTARM64
+
+[QC.NTARM64]
+%SMMU.DeviceDesc%=SMMU_Device, ACPI\QCOM0212
+
+[SMMU_Device.NT]
+CopyFiles=Drivers_Dir
+AddProperty=WDTFSOCDeviceCategory
+AddReg=SMMU_Device_Registry_Settings_Static,SMMU_Device_Registry_Settings_Dynamic
+Reboot
+
+[Drivers_Dir]
+qcsmmu850.sys
+
+[WDTFSOCDeviceCategory]
+{5D078032-6378-437B-8DA5-9B32B7CA3FDD},2,7,,2
+
+[SMMU_Device_Registry_Settings_Static]
+HKR,,ErrataApplicableClients, %REG_BINARY%, 0x00, 0x01,0x04
+HKR,0\MMU_ERRATA,"Type",%REG_DWORD%, 0x3 ; Prefetch Errata 0x00000001 SMMU_TLBI_ERRATA 0x00000002;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;ATCU version specific settings ;;;;;;;;;;;;;;;;;;;;;;;;;;
+HKR,0\PREFETCHDETAILS,"MAP",%REG_BINARY%, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x04, 0x01, 0x01 
+                                ; clientid , prefetch enable/disable , prefetch length
+                                ;  0x00        0x01                    0x01   ; MDP
+								;  0x01        0x01                    0x01   ; VFE
+								;  0x04        0x01                    0x01   ; VIDEO
+								
+HKR,1\MMU_ERRATA,"Type",%REG_DWORD%, 0x1 ; Prefetch Errata
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;GFX MMU version specific settings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+HKR,1\PREFETCHDETAILS,"MAP",%REG_BINARY%, 0x03, 0x00, 0x00 
+                                ; clientid , prefetch enable/disable , prefetch length
+                                ;  0x03        0x00                    0x00   ; GPU 
+
+[SMMU_Device_Registry_Settings_Dynamic]
+; ============================================================
+; SM6150 SMMU CTXI & S2CB MAP (FULL 27 Entries)
+; Highest CB is 0x1D (29), well within the MaxCB limit of 0x2F (47)
+; ============================================================
+HKR,0\CTXI,"MAP",%REG_BINARY%, 0x00, 0x00, 0x04, 0x19, 0x06, 0x04, 0x00, 0x07, 0x10, 0x04, 0x08, 0x04, 0x04, 0x09, 0x08, 0x04, 0x0A, 0x10, 0x04, 0x0B, 0x40, 0x06, 0x0C, 0x04, 0x06, 0x0D, 0x10, 0x02, 0x0E, 0x04, 0x01, 0x0F, 0x04, 0x01, 0x10, 0x04, 0x01, 0x11, 0x04, 0x01, 0x12, 0x04, 0x07, 0x13, 0x04, 0x07, 0x14, 0x04, 0x17, 0x15, 0x04, 0x17, 0x16, 0x04, 0x17, 0x17, 0x04, 0x17, 0x18, 0x04, 0x17, 0x19, 0x04, 0x17, 0x1A, 0x04, 0x17, 0x1B, 0x04, 0x17, 0x1C, 0x04, 0x17, 0x1D, 0x04, 0x17, 0x1E, 0x04, 0x17, 0x1F, 0x04, 0x17, 0x20, 0x04, 0x17, 0x21, 0x04, 0x17, 0x22, 0x10, 0x11, 0x23, 0x04, 0x0B, 0x24, 0x04, 0x0B, 0x25, 0x04, 0x0B, 0x26, 0x04, 0x0C, 0x27, 0x04, 0x0C, 0x28, 0x08, 0x13, 0x29, 0x04, 0x13, 0x2A, 0x04, 0x10, 0x2B, 0x04, 0x10, 0x2C, 0x04
+
+
+                                ;Clnt   CB    VM 
+                                ;0x00, 0x03, 0x04,    //  MDP,            CB3
+                                ;0x04, 0x04, 0x04,    //  VIDEO,          CB4
+                                ;0x04, 0x05, 0x08,    //  VIDEO,          CB5 CP-B
+                                ;0x04, 0x06, 0x10,    //  VIDEO,          CB6 CP-P
+                                ;0x04, 0x07, 0x40,    //  VIDEO,          CB7 CP-NP
+                                ;0x01, 0x08, 0x04,    //  VFE/Camera,     CB8
+                                ;0x01, 0x09, 0x04,    //  VFE/Camera,     CB9
+                                ;0x07, 0x0A, 0x04,    //  LPASS_Q6,       CB10
+                                ;0x07, 0x0B, 0x04,    //  LPASS_Q6,       CB11
+                                ;0x17, 0x0C, 0x04,    //  FASTRPC CDSP0,  CB12
+                                ;0x17, 0x0D, 0x04,    //  FASTRPC CDSP1,  CB13
+                                ;0x17, 0x0E, 0x04,    //  FASTRPC CDSP2,  CB14
+                                ;0x17, 0x0F, 0x04,    //  FASTRPC CDSP3,  CB15
+                                ;0x17, 0x10, 0x04,    //  FASTRPC CDSP4,  CB16
+                                ;0x17, 0x11, 0x04,    //  FASTRPC CDSP5,  CB17
+                                ;0x17, 0x12, 0x10,    //  FASTRPC CDSP6,  CB18 (Secure)
+                                ;0x17, 0x13, 0x04,    //  FASTRPC ADSP0,  CB19
+                                ;0x17, 0x14, 0x04,    //  FASTRPC ADSP1,  CB20
+                                ;0x17, 0x15, 0x04,    //  FASTRPC ADSP2,  CB21
+                                ;0x17, 0x16, 0x04,    //  FASTRPC ADSP3,  CB22
+                                ;0x10, 0x17, 0x04,    //  QUP SE0,        CB23
+                                ;0x11, 0x18, 0x04,    //  QUP SE1,        CB24
+                                ;0x12, 0x19, 0x04,    //  QUP SE2,        CB25
+                                ;0x0B, 0x1A, 0x04,    //  IPA,            CB26
+                                ;0x0B, 0x1B, 0x04,    //  IPA,            CB27
+                                ;0x0B, 0x1C, 0x04,    //  IPA,            CB28
+                                ;0x0C, 0x1D, 0x04,    //  Crypto,         CB29
+
+; -----------------------------------------------------------------------
+; MDP (Display) Client=0x00 (CB0, CB7)
+; -----------------------------------------------------------------------
+HKR, 0\S2CB\0x00\0x04\0x00, "MAP", %REG_BINARY%, 0xFF, 0x08, 0x00, 0x00, 0x00
+HKR, 0\S2CB\0x00\0x10\0x07, "MAP", %REG_BINARY%, 0xFF, 0x08, 0x01, 0x00, 0x00
+
+; -----------------------------------------------------------------------
+; QDSS (Client=0x19) (CB6 - Anchored)
+; -----------------------------------------------------------------------
+HKR, 0\S2CB\0x19\0x04\0x06, "MAP", %REG_BINARY%, 0xFF, 0x00, 0xA0, 0x00, 0x00
+
+; -----------------------------------------------------------------------
+; VIDEO / Venus (Client=0x04) (CB8 to CB11 - Anchored)
+; -----------------------------------------------------------------------
+HKR, 0\S2CB\0x04\0x04\0x08, "MAP", %REG_BINARY%, 0xFF, 0x0E, 0x40, 0x00, 0x20
+HKR, 0\S2CB\0x04\0x08\0x09, "MAP", %REG_BINARY%, 0xFF, 0x0E, 0x61, 0x00, 0x04
+HKR, 0\S2CB\0x04\0x10\0x0A, "MAP", %REG_BINARY%, 0xFF, 0x0E, 0x63, 0x00, 0x00
+HKR, 0\S2CB\0x04\0x40\0x0B, "MAP", %REG_BINARY%, 0xFF, 0x0E, 0x44, 0x00, 0x20
+
+; -----------------------------------------------------------------------
+; ROTATOR (Client=0x06) (CB12, CB13 - Anchored)
+; -----------------------------------------------------------------------
+HKR, 0\S2CB\0x06\0x04\0x0C, "MAP", %REG_BINARY%, 0xFF, 0x0C, 0x40, 0x00, 0x00
+HKR, 0\S2CB\0x06\0x10\0x0D, "MAP", %REG_BINARY%, 0xFF, 0x0C, 0x41, 0x00, 0x00
+
+; -----------------------------------------------------------------------
+; JPEG (Client=0x02) (CB14 - Anchored)
+; -----------------------------------------------------------------------
+HKR, 0\S2CB\0x02\0x04\0x0E, "MAP", %REG_BINARY%, 0xFF, 0x0D, 0x80, 0x00, 0x20, 0xFF, 0x0D, 0xA0, 0x00, 0x20
+
+; =======================================================================
+; --- SEQUENTIAL PACKING STARTS HERE (CB15 to CB45) ---
+; =======================================================================
+
+; -----------------------------------------------------------------------
+; VFE / Camera (Client=0x01) (Unpacked logically!)
+; -----------------------------------------------------------------------
+HKR, 0\S2CB\0x01\0x04\0x0F, "MAP", %REG_BINARY%, 0xFF, 0x08, 0x20, 0x00, 0x40, 0xFF, 0x08, 0x60, 0x00, 0x40, 0xFF, 0x0C, 0x00, 0x00, 0x00, 0xFF, 0x0C, 0x01, 0x00, 0x00, 0xFF, 0x0D, 0x41, 0x00, 0x00
+HKR, 0\S2CB\0x01\0x04\0x10, "MAP", %REG_BINARY%, 0xFF, 0x0C, 0xC1, 0x00, 0x00, 0xFF, 0x08, 0x41, 0x00, 0x00, 0xFF, 0x0C, 0xC0, 0x00, 0x00, 0xFF, 0x0D, 0x40, 0x00, 0x00
+HKR, 0\S2CB\0x01\0x04\0x11, "MAP", %REG_BINARY%, 0xFF, 0x0D, 0xE2, 0x00, 0x00, 0xFF, 0x0C, 0x80, 0x00, 0x00, 0xFF, 0x0C, 0xA0, 0x00, 0x00
+HKR, 0\S2CB\0x01\0x04\0x12, "MAP", %REG_BINARY%, 0xFF, 0x0D, 0x00, 0x00, 0x00, 0xFF, 0x0D, 0x20, 0x00, 0x00
+
+; -----------------------------------------------------------------------
+; LPASS Q6 (Client=0x07) (Missing ADSP 108A/1080 Restored)
+; -----------------------------------------------------------------------
+HKR, 0\S2CB\0x07\0x04\0x13, "MAP", %REG_BINARY%, 0xFF, 0x10, 0x8A, 0x00, 0x00, 0xFF, 0x14, 0x00, 0x00, 0x7F
+HKR, 0\S2CB\0x07\0x04\0x14, "MAP", %REG_BINARY%, 0xFF, 0x10, 0x80, 0x00, 0x00, 0xFF, 0x10, 0x00, 0x00, 0x7F
+
+; -----------------------------------------------------------------------
+; FASTRPC CDSP/ADSP (Client=0x17)
+; -----------------------------------------------------------------------
+HKR, 0\S2CB\0x17\0x04\0x15, "MAP", %REG_BINARY%, 0xFF, 0x10, 0x81, 0x00, 0x00
+HKR, 0\S2CB\0x17\0x04\0x16, "MAP", %REG_BINARY%, 0xFF, 0x10, 0x82, 0x00, 0x00
+HKR, 0\S2CB\0x17\0x04\0x17, "MAP", %REG_BINARY%, 0xFF, 0x10, 0x83, 0x00, 0x00
+HKR, 0\S2CB\0x17\0x04\0x18, "MAP", %REG_BINARY%, 0xFF, 0x10, 0x84, 0x00, 0x00
+HKR, 0\S2CB\0x17\0x04\0x19, "MAP", %REG_BINARY%, 0xFF, 0x10, 0x85, 0x00, 0x00
+HKR, 0\S2CB\0x17\0x04\0x1A, "MAP", %REG_BINARY%, 0xFF, 0x10, 0x86, 0x00, 0x00
+HKR, 0\S2CB\0x17\0x04\0x1B, "MAP", %REG_BINARY%, 0xFF, 0x17, 0x23, 0x00, 0x00
+HKR, 0\S2CB\0x17\0x04\0x1C, "MAP", %REG_BINARY%, 0xFF, 0x17, 0x24, 0x00, 0x00
+HKR, 0\S2CB\0x17\0x04\0x1D, "MAP", %REG_BINARY%, 0xFF, 0x17, 0x25, 0x00, 0x00
+HKR, 0\S2CB\0x17\0x04\0x1E, "MAP", %REG_BINARY%, 0xFF, 0x17, 0x26, 0x00, 0x00
+HKR, 0\S2CB\0x17\0x04\0x1F, "MAP", %REG_BINARY%, 0xFF, 0x17, 0x21, 0x00, 0x00
+HKR, 0\S2CB\0x17\0x04\0x20, "MAP", %REG_BINARY%, 0xFF, 0x17, 0xF3, 0x00, 0x00
+HKR, 0\S2CB\0x17\0x04\0x21, "MAP", %REG_BINARY%, 0xFF, 0x17, 0x2F, 0x00, 0x00
+HKR, 0\S2CB\0x17\0x10\0x22, "MAP", %REG_BINARY%, 0xFF, 0x10, 0x89, 0x00, 0x00 ; Missing 1089 Secure Restored!
+
+; -----------------------------------------------------------------------
+; WLAN (Client=0x11)
+; -----------------------------------------------------------------------
+HKR, 0\S2CB\0x11\0x04\0x23, "MAP", %REG_BINARY%, 0xFF, 0x16, 0x40, 0x00, 0x01
+
+; -----------------------------------------------------------------------
+; IPA (Client=0x0B)
+; -----------------------------------------------------------------------
+HKR, 0\S2CB\0x0B\0x04\0x24, "MAP", %REG_BINARY%, 0xFF, 0x15, 0x20, 0x00, 0x00
+HKR, 0\S2CB\0x0B\0x04\0x25, "MAP", %REG_BINARY%, 0xFF, 0x15, 0x21, 0x00, 0x00
+HKR, 0\S2CB\0x0B\0x04\0x26, "MAP", %REG_BINARY%, 0xFF, 0x15, 0x22, 0x00, 0x00
+
+; -----------------------------------------------------------------------
+; CRYPTO (Client=0x0C)
+; -----------------------------------------------------------------------
+HKR, 0\S2CB\0x0C\0x04\0x27, "MAP", %REG_BINARY%, 0xFF, 0x01, 0x04, 0x00, 0x00, 0xFF, 0x01, 0x14, 0x00, 0x00, 0xFF, 0x01, 0x06, 0x00, 0x00, 0xFF, 0x01, 0x16, 0x00, 0x00
+HKR, 0\S2CB\0x0C\0x08\0x28, "MAP", %REG_BINARY%, 0xFF, 0x01, 0x05, 0x00, 0x00, 0xFF, 0x01, 0x15, 0x00, 0x00, 0xFF, 0x01, 0x07, 0x00, 0x00, 0xFF, 0x01, 0x17, 0x00, 0x00
+
+; -----------------------------------------------------------------------
+; QUP (Client=0x13)
+; -----------------------------------------------------------------------
+HKR, 0\S2CB\0x13\0x04\0x29, "MAP", %REG_BINARY%, 0xFF, 0x00, 0xD6, 0x00, 0x00
+HKR, 0\S2CB\0x13\0x04\0x2A, "MAP", %REG_BINARY%, 0xFF, 0x00, 0xC3, 0x00, 0x00
+
+; -----------------------------------------------------------------------
+; QUP1 (Client=0x10)
+; -----------------------------------------------------------------------
+HKR, 0\S2CB\0x10\0x04\0x2B, "MAP", %REG_BINARY%, 0xFF, 0x03, 0x76, 0x00, 0x00
+HKR, 0\S2CB\0x10\0x04\0x2C, "MAP", %REG_BINARY%, 0xFF, 0x03, 0x63, 0x00, 0x00
+
+
+; ============================================================
+; Instance 1: GPU SMMU (kgsl-iommu@0x050a0000, phandle 0x14b)
+; GPU SMMU is separate hardware — XBL lock does not apply here
+; SM6150 has 2 TBUs: TBU0 (SID 0x000-0x3FF) TBU1 (SID 0x400-0x7FF)
+; Each CB must map BOTH TBU0 and TBU1 counterparts
+; ============================================================
+HKR, 1\CTXI, "MAP", %REG_BINARY%, 0x03, 0x00, 0x04, 0x03, 0x01, 0x04, 0x03, 0x02, 0x04, 0x03, 0x03, 0x10
+                                ;Clnt   CB    VM 
+                                ;0x03, 0x00, 0x04,    //  GFX,CB0 (S1_GPU), HLOS
+                                ;0x03, 0x01, 0x04,    //  GFX,CB1 (S1_GPU_ECP), HLOS
+                                ;0x03, 0x02, 0x04,    //  GFX,CB2 (S1_GPU_ECP_FW), HLOS
+                                ;0x03, 0x03, 0x10,    //  GFX,CB3 (S1_GPU_P), CP_PIXEL
+
+HKR, 1\S2CB\0x03\0x04\0x00, "MAP", %REG_BINARY%, 0xFF, 0x00, 0x00, 0x04, 0x01
+; Clnt:0x03 CB:0x00 VM:0x04     ; Entry,  StreamId ,    Mask
+                                ; 0xFF, 0x00, 0x00, 0x04, 0x01 
+
+HKR, 1\S2CB\0x03\0x04\0x01, "MAP", %REG_BINARY%, 0xFF, 0x00, 0x04, 0x04, 0x00
+; Clnt:0x03 CB:0x01 VM:0x04     ; Entry,  StreamId ,    Mask
+                                ; 0xFF, 0x00, 0x04, 0x04, 0x00 
+
+HKR, 1\S2CB\0x03\0x04\0x02, "MAP", %REG_BINARY%, 0xFF, 0x00, 0x05, 0x04, 0x00
+; Clnt:0x03 CB:0x02 VM:0x04     ; Entry,  StreamId ,    Mask
+                                ; 0xFF, 0x00, 0x05, 0x04, 0x00 
+
+HKR, 1\S2CB\0x03\0x10\0x03, "MAP", %REG_BINARY%, 0xFF, 0x00, 0x02, 0x04, 0x00
+; Clnt:0x03 CB:0x03 VM:0x10     ; Entry,  StreamId ,    Mask
+                                ; 0xFF, 0x00, 0x02, 0x04, 0x00
+
+
+[SMMU_Hardware_Registry_Base]
+HKR,Parameters\0,"Guid",%REG_SZ%,"{36079AE4-78E8-452D-AF50-0CFF78B2F1CA}"
+HKR,Parameters\0\OFFI,"OFFSETS",%REG_BINARY%,0x00,0x01,0x02,0x03,0x04,0xFF,0x40
+                                ;0x00,                // Global 0 page offset from Base Address
+                                ;0x01,                // Global 1 page offset from Base Address
+                                ;0x02,                // Implementation defined 0 page offset from Base Address
+                                ;0x03,                // Perf page offset from base address
+                                ;0x04,                // SSD page offset from base address
+                                ;0xFF,                // Invalid page offset,temporary workaround : implementation defined 1 registers are not available for smmu500 & same driver is used, proper logic needs to be added in acpi method which reads the offset entries.
+                                ;0x40                 // CB page offset from base address
+
+HKR,Parameters\0\HYPD,"Enabled",%REG_DWORD%, 0x0
+HKR,Parameters\0\ARMV,"Type",%REG_DWORD%, 0x1 ; ARMv7L = 0, ARMv8L = 1;
+HKR,Parameters\0\CLCK,"Enabled",%REG_DWORD%, 0x1 ; 1, enabled
+HKR,Parameters\0\SCLCK,"Enabled",%REG_DWORD%, 0x1 ; 1, clock should be controlled by SMMU driver
+HKR,Parameters\0\MMUV,"Type",%REG_DWORD%, 0x0 ; ARM SMMU500 = 0, QCSMMU = 1
+
+HKR,Parameters\1,"Guid",%REG_SZ%,"{9833C712-3292-4FFB-B0F4-2BD20E1F7F66}"
+
+HKR,Parameters\1\OFFI,"OFFSETS",%REG_BINARY%,0x00,0x01,0x02,0x03,0x04,0x06,0x08
+                               ;0x00        Global 0 page offset from Base Address
+                               ;0x01,       Global 1 page offset from Base Address
+                               ;0x02,       Implementation defined 0 page offset from Base Address
+                               ;0x03,       Perf page offset from base address
+                               ;0x04,       SSD page offset from base address
+                               ;0x06,       Implementation defined 1 page offset from base address
+                               ;0x08        CB page offset from base address
+
+HKR,Parameters\1\HYPD,"Enabled",%REG_DWORD%, 0x0
+HKR,Parameters\1\ARMV,"Type",%REG_DWORD%, 0x1 ; ARMv7L = 0, ARMv8L = 1;
+HKR,Parameters\1\CLCK,"Enabled",%REG_DWORD%, 0x1 ; 1, enabled
+HKR,Parameters\1\SCLCK,"Enabled",%REG_DWORD%, 0x1 ; 1, clock should be controlled by SMMU driver
+HKR,Parameters\1\MMUV,"Type",%REG_DWORD%, 0x1 ; ARM SMMU500 = 0, QCSMMU = 1
+
+
+
+[SMMU_SoftwareDeviceSettings]
+HKR,Parameters,PowerManaged, %REG_DWORD%, 1
+HKR,Parameters,EnablePtCaching, %REG_DWORD%, 1
+HKR,Parameters,EnableGuardPages, %REG_DWORD%, 1
+HKR,Parameters,EnableTestInterface, %REG_DWORD%, 0
+
+;-------------- Service installation
+[SMMU_Device.NT.Services]
+AddService = qcsmmu,%SPSVCINST_ASSOCSERVICE%, SMMU_Service_Inst
+
+; -------------- skeletoni2c driver install sections
+[SMMU_Service_Inst]
+DisplayName    = %SMMU.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START 
+ErrorControl   = 0               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\qcsmmu850.sys
+AddReg = SMMU_SoftwareDeviceSettings,SMMU_Hardware_Registry_Base
+
+[SMMU_Device.NT.Wdf]
+KmdfService =  qcsmmu, SMMU_wdfsect
+[SMMU_wdfsect]
+KmdfLibraryVersion = 1.13
+
+[Strings]
+;Localizable Strings
+QC="Qualcomm Inc."
+SMMU.DeviceDesc="Qualcomm System MMU Device"
+SMMU.SVCDESC="Qualcomm System MMU Driver"
+DiskId="Qualcomm System MMU Driver Installation Disk"
+
+;Non-localizable Strings
+SPSVCINST_ASSOCSERVICE= 0x00000002
+REG_DWORD = 0x00010001
+REG_SZ = 0x00000000
+REG_BINARY = 0x00000001
+REG_MULTI_SZ = 0x00010000

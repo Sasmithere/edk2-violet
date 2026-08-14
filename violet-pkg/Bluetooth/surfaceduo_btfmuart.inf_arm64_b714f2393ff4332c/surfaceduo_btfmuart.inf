@@ -1,0 +1,140 @@
+;/* 
+;Copyright (c) 2013 Qualcomm Atheros, Inc.
+;All Rights Reserved. 
+;Qualcomm Atheros Confidential and Proprietary. 
+;*/
+
+[Version]
+Signature          = "$Windows NT$"
+Class=Bluetooth
+ClassGuid={e0cbf06c-cd8b-4647-bb8a-263b43f0f974}
+Provider           = %Surface%
+DriverVer = 06/05/2022,1.0.1780.0000
+CatalogFile.NT     = SurfaceDuo_btfmuart.cat
+
+[DestinationDirs]
+BTUART.Files       = 13
+
+[SourceDisksNames]
+1=%SourceDisk%,,1
+
+[SourceDisksFiles]
+
+
+apbtfw10.tlv = 1,
+apbtfw11.tlv = 1,
+apnv10.bin = 1,
+apnv11.bin = 1,
+crbtfw11.tlv = 1,
+crbtfw20.tlv = 1,
+crbtfw21.tlv = 1,
+crnv11.bin = 1,
+crnv20.bin = 1,
+crnv21.bin = 1,
+
+qcbtfmuart8150.sys = 1,,
+
+[ControlFlags]
+ExcludeFromSelect=*
+
+[Manufacturer]
+%Surface% = QCABT,NTARM64
+
+[QCABT.NTARM64]
+%UartBtAPQ8150% = QCABTUART, ACPI\VEN_QCOM&DEV_0571&SUBSYS_CDP08150
+%UartBtAPQ8150% = QCABTUART, ACPI\VEN_QCOM&DEV_0571&SUBSYS_CDPA8150
+%UartBtAPQ8150% = QCABTUART, ACPI\VEN_QCOM&DEV_0571&SUBSYS_MTP08150
+%UartBtAPQ8150% = QCABTUART, ACPI\VEN_QCOM&DEV_0571&SUBSYS_MTP08150
+%UartBtAPQ8150% = QCABTUART, ACPI\VEN_QCOM&DEV_0571&SUBSYS_MTPA8150
+%UartBtAPQ8150% = QCABTUART, ACPI\VEN_QCOM&DEV_0571&SUBSYS_MTPB8150
+%UartBtAPQ8150% = QCABTUART, ACPI\VEN_QCOM&DEV_0571&SUBSYS_MTPD8150
+%UartBtAPQ8150% = QCABTUART, ACPI\VEN_QCOM&DEV_0571&SUBSYS_CLS08150
+%UartBtAPQ8150% = QCABTUART, ACPI\VEN_QCOM&DEV_0571&SUBSYS_CLSA8150
+%UartBtAPQ8150% = QCABTUART, ACPI\VEN_QCOM&DEV_0571&SUBSYS_CLSB8150
+
+[QCABTUART.NT]
+CopyFiles = BTUART.Files
+AddReg	  = BTUART.AddReg
+
+[BTUART.Files]
+
+
+apbtfw10.tlv
+apbtfw11.tlv
+apnv10.bin
+apnv11.bin
+crbtfw11.tlv
+crbtfw20.tlv
+crbtfw21.tlv
+crnv11.bin
+crnv20.bin
+crnv21.bin
+
+qcbtfmuart8150.sys
+
+[QCABTUART.NT.HW]
+AddReg = BTUART.HW.AddReg
+
+[BTUART.HW.AddReg]
+HKR,,DeviceCharacteristics,0x10001,0x0100                  ; Use same security checks on relative opens
+HKR,,Security,,"D:P(A;;GA;;;BA)(A;;GA;;;SY)(A;;GA;;;LS)"   ; Allow generic-all access to Built-in administrators and Local system 
+
+[QCABTUART.NT.Services]
+AddService = QcBluetooth,0x00000002,BTUART_Service
+
+[BTUART_Service]
+DisplayName    = %SvcDispName%
+ServiceType    = 1  ; SERVICE_KERNEL_DRIVER
+StartType      = 3  ; SERVICE_DEMAND_START 
+ErrorControl   = 1  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\qcbtfmuart8150.sys
+;AddReg	       = BTUART_Service.AddReg
+
+[BTUART.AddReg]
+HKR,Parameters,DebugFlags,0x10001,0xC000C000
+HKR,Parameters,DebugLevel,0x10001,0x0001FFFF
+HKR,Parameters,BtLogEnabled,0x10001,0
+HKR,Parameters,HCIDumpEnabled,0x10001,0
+HKR,Parameters,HciDumpRawDataForEventsNotDecoded,0x10001,1
+HKR,Parameters,AclDumpRawData,0x10001,1
+HKR,Parameters,HciDumpTruncateSize,0x10001,0
+HKR,Parameters,RamPatchDumpEnabled,0x10001,0
+HKR,Parameters,RamPsDumpEnabled,0x10001,0
+HKR,Parameters,RamPsOveride,0x10001,0
+HKR,Parameters,UART_TO_READ,0x10001,40
+HKR,Parameters,UART_TO_WRITE,0x10001,1500
+HKR,Parameters,BaudRate,0x10001,3200000
+HKR,Parameters,DefaultBaudRate,0x10001,115200
+HKR,Parameters,ExplicitRtsWakeup,0x10001,1
+HKR,Parameters,CmdAclOutUseUnifiedQ,0x10001,0
+HKR,Parameters,EvtAclInUseUnifiedQ,0x10001,1
+HKR,Parameters,EvtAclInGoThroughIoWorker,0x10001,0
+HKR,Parameters,EvtInPrioritized,0x10001,1
+HKR,Parameters,AclPassupDelay,0x10001,10
+HKR,Parameters,RadioRtD2Enabled,0x10001,1
+HKR,Parameters,RadioGPIOControled,0x10001,0
+HKR,Parameters,WriteRetryEnabled,0x10001,1
+HKR,Parameters,WlanCoexEnabled,0x10001,0
+HKR,Parameters,FwLogToFileEnabled,0x10001,0
+HKR,Parameters,LTECoexEnabled,0x10001,0
+HKR,Parameters,SSREnabled,0x10001,1
+HKR,Parameters,IsRome,0x10001,1
+HKR,Parameters,SWInBandSleepEnabled,0x10001,1
+HKR,Parameters,RomeDeepSleepEnabled,0x10001,0
+HKR,Parameters,AFHEnabled,0x10001,1
+HKR,Parameters,FWLogEnabled,0x10001,0
+HKR,Parameters,RandomBTAddrEnabled,0x10001,1
+HKR,Parameters,BtSnoopHciEnabled,0x10001,0
+HKR,Parameters,BtSnoopLogNew,0x10001,0
+HKR,Parameters,HandleOffWipower,0x10001,0
+HKR,Parameters,DynamicSwitch,0x10001,0
+HKR,Parameters,A2dpOffloadEnabled,0x10001,0
+HKR,Parameters,EnhancedPowerControlEnable,0x10001,0 
+
+[Strings]
+Surface            = "Surface"
+SourceDisk         = "Surface Duo Bluetooth Extensibility Transport Driver Installation Disk"
+SvcDispName        = "Surface Duo Bluetooth UART Transport Device"
+UartBTAPQ8150      = "Surface Duo Bluetooth UART Transport Driver"
+REG_DWORD          = 0x00010001
+REG_SZ             = 0x00000000

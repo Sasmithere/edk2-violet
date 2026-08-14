@@ -1,0 +1,144 @@
+;/*++
+;
+;Copyright (c) 2016 Qualcomm Technologies, Inc.  All Rights Reserved.
+;
+;Module Name:
+;    qcadcm.inf
+;
+;Abstract:
+;    INF file for installing the Driver Frameworks ADCM Driver
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=SYSTEM
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider=%QCOM%
+DriverVer = 06/05/2022,1.0.1780.0000
+CatalogFile=qcadcm8150.cat
+PnpLockDown = 1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskId1%
+
+[SourceDisksFiles]
+qcadcm8150.sys  = 1
+
+
+;*****************************************
+; Audio DSP and Calibration Manager (ADCM) Install Section
+;*****************************************
+
+[Manufacturer]
+%QCOM%=Standard,NTARM64
+
+[Standard.NTARM64]
+%ADCM.DeviceDesc%=ADCM_Device, SLM1\QCOM0524
+%ADCM.DeviceDesc%=ADCM_Device, ACPI\QCOM0524
+
+[ADCM_Device.NTARM64]
+CopyFiles=Drivers_Dir
+AddProperty=WDTFSOCDeviceCategory
+
+[Drivers_Dir]
+qcadcm8150.sys
+
+[WDTFSOCDeviceCategory]
+{5D078032-6378-437B-8DA5-9B32B7CA3FDD},2,7,,2
+
+;-------------- Service installation
+[ADCM_Device.NTARM64.Services]
+AddService = qcadcm,%SPSVCINST_ASSOCSERVICE%, ADCM_Service_Inst
+
+[ADCM_Device.NTARM64.HW]
+AddReg = ADCMReg,ADCMReg_8150
+
+[ADCMReg]
+HKR,ADCM,EnableTxDataLogging,,"FALSE"
+HKR,ADCM,EnableRxDataLogging,,"FALSE"
+HKR,ADCM,EnableIFRLogging,,"TRUE"
+HKR,ADCM,EnableADCMSelfRestart,,FALSE
+HKR,ADCM,EnableAudioPDR,,TRUE
+HKR,ADCM\ModulesLoadingInfo,AVCSCurrentStateQueryTimeoutBeforeRetryInMilliSec,%REG_DWORD%,150
+HKR,ADCM\ModulesLoadingInfo,AVCSModulesEventPollingMaxTimeoutInMilliSec,%REG_DWORD%,15000
+HKR,ADCM\ModulesLoadingInfo,FirstBootDynamicModulesLoadState,%REG_DWORD%,0
+
+
+[ADCMReg_8150]
+HKR,ADCM\SMMU\POIPU_V1,"SmmuBaseAddressLSB",%REG_DWORD%,0x00000000
+HKR,ADCM\SMMU\POIPU_V1,"SmmuBaseAddressMSB",%REG_DWORD%,0x00000001
+HKR,ADCM\SMMU\POIPU_V1,"SmmuEndAddressLSB",%REG_DWORD%,0xFFFF0000
+HKR,ADCM\SMMU\POIPU_V1,"SmmuEndAddressMSB",%REG_DWORD%,0x00000001
+HKR, ADCM\SMMU,              "SmmuBaseAddressLSB",                      %REG_DWORD%, 0x00000000
+HKR, ADCM\SMMU,              "SmmuBaseAddressMSB",                      %REG_DWORD%, 0x00000000
+HKR, ADCM\SMMU,              "SmmuEndAddressLSB",                       %REG_DWORD%, 0x1FFFFFFF
+HKR, ADCM\SMMU,              "SmmuEndAddressMSB",                       %REG_DWORD%, 0x00000000
+HKR, ADCM\SMMU,              "AudioAridBase",                           %REG_DWORD%, 0x07030000
+; --- CORRECTED FOR SM6150 BELOW ---
+HKR, ADCM\AVTimerInfo,       "LpassAvtimerBase",                        %REG_DWORD%, 0x62CF7000
+HKR, ADCM\AVTimerInfo,       "LpassAvtimerLsb",                         %REG_DWORD%, 0x62CF700C
+HKR, ADCM\AVTimerInfo,       "LpassAvtimerMsb",                         %REG_DWORD%, 0x62CF7010
+; ----------------------------------
+HKR, ADCM\AVTimerInfo,       "LpassAvtimerNumeratorFactor",             %REG_DWORD%, 0x0000000A
+HKR, ADCM\AVTimerInfo,       "LpassAvtimerDenominatorFactor",           %REG_DWORD%, 0x000000C0
+HKR, ADCM\MemoryInformation, "EBIStartAddressLSW",                      %REG_DWORD%, 0x80000000
+HKR, ADCM\MemoryInformation, "EBISTARTAddressMSW",                      %REG_DWORD%, 0x00000000
+HKR, ADCM\MemoryInformation, "EBIEndAddressLSW",                        %REG_DWORD%, 0xA0000000
+HKR, ADCM\MemoryInformation, "EBIEndAddressMSW",                        %REG_DWORD%, 0x00000000
+HKR, ADCM\MemoryInformation, "BoundaryAddressMultipleLSW",              %REG_DWORD%, 0x00000000
+HKR, ADCM\MemoryInformation, "BoundaryAddressMultipleMSW",              %REG_DWORD%, 0x00000000
+HKR, ADCM\MemoryInformation, "MemoryCacheType",                         %REG_DWORD%, 0x00000002
+HKR, ADCM\ADSPSVABUFFERINFO, "NoofPreallocatedBuffersforSVA",           %REG_DWORD%, 0x00000000
+HKR, ADCM\ADSPSVABUFFERINFO, "SoundModelLibraryPreallocatedBufferSize", %REG_DWORD%, 0x8C000
+
+; -------------- ADCM driver install sections
+[ADCM_Service_Inst]
+DisplayName    = %ADCM.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START 
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\qcadcm8150.sys
+;Tag            = 4
+;LoadOrderGroup = Extended Base
+;Ensures PortCls and its dependent files are installed
+Include=wdmaudio.inf
+Needs=WDMPORTCLS.CopyFilesOnly 
+
+;[ADCM_Device.NT$ARCH$.Wdf]
+;KmdfService =  ADCM, ADCM_wdfsect
+;[ADCM_wdfsect]
+;KmdfLibraryVersion = $KMDFVERSION$
+
+
+; ================= ADCM Interface Installation ============================
+; This sample sets the custom capability programatically in the code which
+; allows Windows store apps for device to access this device interface through 
+; Windows.Devices.Custom namespace. 
+
+[ADCM_Device.NTARM64.Interfaces]
+AddInterface="{%GUID_DEVPROPINTERFACE_ADCM%}", , ADCMAddInterface
+ 
+[ADCMAddInterface] 
+AddProperty=ADCMAddInterface.AddProps 
+ 
+[ADCMAddInterface.AddProps]
+{%DEVPKEY_DeviceInterface_UnrestrictedAppCapabilities%}, 8, 0x2012,, %CustomCapability%
+;{{property-category-guid}, property-pid, type, [flags], value)}
+[Strings]
+;Localizable Strings
+REG_DWORD = 0x00010001
+QCOM = "Qualcomm Technologies, Inc."
+StdMfg = "(Standard system devices)"
+DiskId1 = "ADCM Installation Disk"
+ADCM.DeviceDesc = "Qualcomm(R) Aqstic(TM) Audio DSP and Calibration Manager"
+ADCM.SVCDESC = "Qualcomm(R) Aqstic(TM) Audio DSP and Calibration Manager"
+GUID_DEVPROPINTERFACE_ADCM="8FEAF834-4EDC-4634-80D1-2D1D77F09F2B"
+DEVPKEY_DeviceInterface_UnrestrictedAppCapabilities="026e516e-b814-414b-83cd-856d6fef4822"
+CustomCapability="microsoft.hsaTestCustomCapability_q536wpkpf5cy2"
+
+;Non-Localizable Strings
+SPSVCINST_ASSOCSERVICE= 0x00000002

@@ -1,0 +1,252 @@
+;/*++
+;
+;Copyright (c) 2017  Qualcomm Technologies, Inc.
+;
+;Module Name:
+;    qcacsp_mtp.inf
+;
+;Abstract:
+;    Extenstion INF file for installing the Audio Calibration Settings MTP Package for ACDM.
+;
+;Installation Notes: 
+;    
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Extension
+ClassGuid={e2f84ce7-8efa-411c-aa69-97454ca4cb57}
+Provider=%Surface%
+ExtensionId = {3282F2C8-526D-42FF-AEB0-2E1A1FA3B075}
+DriverVer = 06/05/2022,1.0.1780.0000
+CatalogFile=SurfaceDuo_acsp.cat
+
+[DestinationDirs]
+ACSPFiles = 13
+
+[SourceDisksNames]
+1=%DiskId1%
+
+[SourceDisksFiles]
+Bluetooth_cal.acdb = 1
+Codec_cal.acdb = 1
+General_cal.acdb = 1
+Global_cal.acdb = 1
+Handset_cal.acdb = 1
+Hdmi_cal.acdb = 1
+Headset_cal.acdb = 1
+Speaker_cal.acdb = 1
+workspaceFile.qwsp = 1
+SURFACE_A_Bluetooth_cal.acdb = 1
+SURFACE_A_Codec_cal.acdb = 1
+SURFACE_A_General_cal.acdb = 1
+SURFACE_A_Global_cal.acdb = 1
+SURFACE_A_Handset_cal.acdb = 1
+SURFACE_A_Hdmi_cal.acdb = 1
+SURFACE_A_Headset_cal.acdb = 1
+SURFACE_A_Speaker_cal.acdb = 1
+SURFACE_A_workspaceFile.qwsp = 1
+SURFACE_B_Bluetooth_cal.acdb = 1
+SURFACE_B_Codec_cal.acdb = 1
+SURFACE_B_General_cal.acdb = 1
+SURFACE_B_Global_cal.acdb = 1
+SURFACE_B_Handset_cal.acdb = 1
+SURFACE_B_Hdmi_cal.acdb = 1
+SURFACE_B_Headset_cal.acdb = 1
+SURFACE_B_Speaker_cal.acdb = 1
+SURFACE_B_workspaceFile.qwsp = 1
+adsp_avs_config.acdb = 1
+
+;*****************************************
+; ACSP  Install Section
+;*****************************************
+[Manufacturer]
+%Surface%=Extensions,NTARM64
+
+; Decorated model section take precedence over undecorated 
+; ones on XP and later.
+[Extensions.NTARM64]
+%ACSP.DeviceDesc%= Extension_Device,   ACPI\QCOM0524   ; This is the parent INF that we get installed with
+%ACSP.DeviceDesc%= Extension_Device_A, SLM1\VEN_QCOM&DEV_0524&SUBSYS_MSDA8150   ; This is the parent INF that we get installed with
+%ACSP.DeviceDesc%= Extension_Device_B, SLM1\VEN_QCOM&DEV_0524&SUBSYS_MSDB8150   ; This is the parent INF that we get installed with
+%ACSP.DeviceDesc%= Extension_Device_C, SLM1\VEN_QCOM&DEV_0524&SUBSYS_MSDC8150   ; This is the parent INF that we get installed with
+
+[Extension_Device.HW]
+Addreg=ACSPReg
+
+[Extension_Device]
+CopyFiles=ACSPFiles
+
+[Extension_Device_A.HW]
+; Temporarily Commented out while the databases get converted to the correct format
+:Addreg=ACSPReg_A
+AddReg=ACSPReg
+
+[Extension_Device_A]
+; Temporarily Commented out while the databases get converted to the correct format
+;CopyFiles=ACSPFiles_A
+CopyFiles=ACSPFiles
+
+[Extension_Device_B.HW]
+; Temporarily Commented out while the databases get converted to the correct format
+:Addreg=ACSPReg_B
+AddReg=ACSPReg
+
+[Extension_Device_B]
+; Temporarily Commented out while the databases get converted to the correct format
+;CopyFiles=ACSPFiles_B
+CopyFiles=ACSPFiles
+
+[Extension_Device_C.HW]
+; Temporarily Commented out while the databases get converted to the correct format
+:Addreg=ACSPReg_C
+AddReg=ACSPReg
+
+[Extension_Device_C]
+; Temporarily Commented out while the databases get converted to the correct format
+;CopyFiles=ACSPFiles_C
+CopyFiles=ACSPFiles
+
+
+[ACSPFiles]
+Bluetooth_cal.acdb
+Codec_cal.acdb
+General_cal.acdb
+Global_cal.acdb
+Handset_cal.acdb
+Hdmi_cal.acdb
+Headset_cal.acdb
+Speaker_cal.acdb
+workspaceFile.qwsp
+adsp_avs_config.acdb
+
+[ACSPFiles_A]
+SURFACE_A_Bluetooth_cal.acdb
+SURFACE_A_Codec_cal.acdb
+SURFACE_A_General_cal.acdb
+SURFACE_A_Global_cal.acdb
+SURFACE_A_Handset_cal.acdb
+SURFACE_A_Hdmi_cal.acdb
+SURFACE_A_Headset_cal.acdb
+SURFACE_A_Speaker_cal.acdb
+SURFACE_A_workspaceFile.qwsp
+adsp_avs_config.acdb
+
+[ACSPFiles_B]
+SURFACE_B_Bluetooth_cal.acdb
+SURFACE_B_Codec_cal.acdb
+SURFACE_B_General_cal.acdb
+SURFACE_B_Global_cal.acdb
+SURFACE_B_Handset_cal.acdb
+SURFACE_B_Hdmi_cal.acdb
+SURFACE_B_Headset_cal.acdb
+SURFACE_B_Speaker_cal.acdb
+SURFACE_B_workspaceFile.qwsp
+adsp_avs_config.acdb
+
+[ACSPFiles_C]
+SURFACE_A_Bluetooth_cal.acdb
+SURFACE_A_Codec_cal.acdb
+SURFACE_A_General_cal.acdb
+SURFACE_A_Global_cal.acdb
+SURFACE_A_Handset_cal.acdb
+SURFACE_A_Hdmi_cal.acdb
+SURFACE_A_Headset_cal.acdb
+SURFACE_A_Speaker_cal.acdb
+SURFACE_A_workspaceFile.qwsp
+adsp_avs_config.acdb
+
+[ACSPReg]
+HKR,AudioCalibSettings, AcbdFilePath1, %REG_SZ%, "%13%\Bluetooth_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath2, %REG_SZ%, "%13%\Codec_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath3, %REG_SZ%, "%13%\General_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath4, %REG_SZ%, "%13%\Global_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath5, %REG_SZ%, "%13%\Handset_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath6, %REG_SZ%, "%13%\Hdmi_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath7, %REG_SZ%, "%13%\Headset_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath8, %REG_SZ%, "%13%\Speaker_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath9, %REG_SZ%, "%13%\workspaceFile.qwsp"
+HKR,AudioCalibSettings, AcbdFilePath10, %REG_SZ%, "%13%\adsp_avs_config.acdb"
+HKR,AudioCalibSettings, AcbdFilePath11, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath12, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath13, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath14, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath15, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath16, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath17, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath18, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath19, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath20, %REG_SZ%, ""
+
+[ACSPReg_A]
+HKR,AudioCalibSettings, AcbdFilePath1, %REG_SZ%, "%13%\SURFACE_A_Bluetooth_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath2, %REG_SZ%, "%13%\SURFACE_A_Codec_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath3, %REG_SZ%, "%13%\SURFACE_A_General_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath4, %REG_SZ%, "%13%\SURFACE_A_Global_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath5, %REG_SZ%, "%13%\SURFACE_A_Handset_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath6, %REG_SZ%, "%13%\SURFACE_A_Hdmi_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath7, %REG_SZ%, "%13%\SURFACE_A_Headset_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath8, %REG_SZ%, "%13%\SURFACE_A_Speaker_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath9, %REG_SZ%, "%13%\SURFACE_A_workspaceFile.qwsp"
+HKR,AudioCalibSettings, AcbdFilePath10, %REG_SZ%, "%13%\adsp_avs_config.acdb"
+HKR,AudioCalibSettings, AcbdFilePath11, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath12, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath13, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath14, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath15, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath16, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath17, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath18, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath19, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath20, %REG_SZ%, ""
+
+[ACSPReg_B]
+HKR,AudioCalibSettings, AcbdFilePath1, %REG_SZ%, "%13%\SURFACE_B_Bluetooth_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath2, %REG_SZ%, "%13%\SURFACE_B_Codec_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath3, %REG_SZ%, "%13%\SURFACE_B_General_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath4, %REG_SZ%, "%13%\SURFACE_B_Global_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath5, %REG_SZ%, "%13%\SURFACE_B_Handset_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath6, %REG_SZ%, "%13%\SURFACE_B_Hdmi_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath7, %REG_SZ%, "%13%\SURFACE_B_Headset_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath8, %REG_SZ%, "%13%\SURFACE_B_Speaker_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath9, %REG_SZ%, "%13%\SURFACE_B_workspaceFile.qwsp"
+HKR,AudioCalibSettings, AcbdFilePath10, %REG_SZ%, "%13%\adsp_avs_config.acdb"
+HKR,AudioCalibSettings, AcbdFilePath11, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath12, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath13, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath14, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath15, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath16, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath17, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath18, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath19, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath20, %REG_SZ%, ""
+
+[ACSPReg_C]
+HKR,AudioCalibSettings, AcbdFilePath1, %REG_SZ%, "%13%\SURFACE_A_Bluetooth_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath2, %REG_SZ%, "%13%\SURFACE_A_Codec_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath3, %REG_SZ%, "%13%\SURFACE_A_General_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath4, %REG_SZ%, "%13%\SURFACE_A_Global_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath5, %REG_SZ%, "%13%\SURFACE_A_Handset_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath6, %REG_SZ%, "%13%\SURFACE_A_Hdmi_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath7, %REG_SZ%, "%13%\SURFACE_A_Headset_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath8, %REG_SZ%, "%13%\SURFACE_A_Speaker_cal.acdb"
+HKR,AudioCalibSettings, AcbdFilePath9, %REG_SZ%, "%13%\SURFACE_A_workspaceFile.qwsp"
+HKR,AudioCalibSettings, AcbdFilePath10, %REG_SZ%, "%13%\adsp_avs_config.acdb"
+HKR,AudioCalibSettings, AcbdFilePath11, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath12, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath13, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath14, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath15, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath16, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath17, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath18, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath19, %REG_SZ%, ""
+HKR,AudioCalibSettings, AcbdFilePath20, %REG_SZ%, ""
+
+[Strings]
+REG_SZ=0x00000000
+Surface = "Surface"
+DiskId1 = "Surface Duo ACSP Installation Disk #1"
+ACSP.DeviceDesc = "Surface Duo Audio Calibration Settings Pkg for AND"
