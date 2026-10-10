@@ -1,0 +1,246 @@
+Handling Cmd: reboot
+rebooting the device
+Sending 4:OKAY
+xinj: PowerDownLcdWled
+Start EBS        [98198] 
+BDS: LogFs sync skipped, Unsupported
+App Log Flush : 0 ms
+Exit
+Format: Log Type - Time(microsec) - Message - Optional Info
+Log Type: B - Since Boot(Power On Reset),  D - Delta,  S - Statistic
+S - QC_IMAGE_VERSION_STRING=BOOT.XF.3.1-00208-SM6150LZB-1
+S - IMAGE_VARIANT_STRING=SDM6150LA
+S - OEM_IMAGE_VERSION_STRING=c4-miui-ota-bd188.bj
+S - Boot Interface: eMMC
+S - Secure Boot: On
+S - Boot Config @ 0x00786070 = 0x000000c1
+S - JTAG ID @ 0x00786130 = 0x100950e1
+S - OEM ID @ 0x00786138 = 0x00720000
+S - Serial Number @ 0x00784138 = 0x16a0d9eb
+S - Feature Config Row 0 @ 0x007841a0 = 0x08d0200016208400
+S - Feature Config Row 1 @ 0x007841a8 = 0xe0140000000310a0
+S - Core 0 Frequency, 1516 MHz
+S - PBL Patch Ver: 2
+S - PBL freq: 600 MHZ
+D -      5634 - pbl_apps_init_timestamp
+D -    489506 - bootable_media_detect_timestamp
+D -      1797 - bl_elf_metadata_loading_timestamp
+D -      9096 - bl_hash_seg_auth_timestamp
+D -     50448 - bl_elf_loadable_segment_loading_timestamp
+D -      5045 - bl_elf_segs_hash_verify_timestamp
+D -      6755 - bl_sec_hash_seg_auth_timestamp
+D -       820 - bl_sec_segs_hash_verify_timestamp
+D -        36 - pbl_populate_shared_data_and_exit_timestamp
+S -    569137 - PBL, End
+B -    589260 - SBL1, Start
+B -    698358 - SBL1 BUILD @ 14:19:37 on Aug 16 2021
+B -    704031 - usb: hs_phy_nondrive_start
+B -    706105 - usb: hs_phy_nondrive_finish
+B -    709704 - boot_flash_init, Start
+D -         0 - boot_flash_init, Delta
+B -    717299 - xblconfig_init, Start
+D -      5368 - Auth Metadata
+D -     33733 - xblconfig_init, Delta
+B -    756247 - boot_config_data_table_init, Start
+B -    759724 - Using default CDT
+D -      4636 - boot_config_data_table_init, Delta - (0 Bytes)
+B -    767502 - CDT Version:3,Platform ID:34,Major ID:1,Minor ID:0,Subtype:0
+B -    780403 - pm_device_init, Start
+B -    785619 - PM: PM 0=0x8000028000000011:0x0 
+B -    785680 - PM: PM 2=0x8000018000000020:0x0 
+B -    790133 - PM: HARD_RESET by PS_HOLD
+B -    870927 - PM: SET_VAL:Skip
+B -    871171 - PM: PSI: b0x10_v0x43
+B -    878003 - PM: Device Init # SPMI Transn: 4927
+D -     97569 - pm_device_init, Delta
+B -    882731 - pm_driver_init, Start
+B -    891972 - PM: Driver Init # SPMI Transn: 371
+D -      5764 - pm_driver_init, Delta
+B -    900970 - PM: battery Id: 69114
+B -    901061 - PM: EntryVbat: 4316;
+B -    904691 - vsense_init, Start
+D -        30 - vsense_init, Delta
+B -    949343 - sbl1_ddr_set_params, Start
+B -    950227 - Pre_DDR_clock_init, Start
+D -        61 - Pre_DDR_clock_init, Delta
+D -      8235 - sbl1_ddr_set_params, Delta
+B -    960963 - sbl1_ddr_init, Start
+D -      9028 - sbl1_ddr_init, Delta
+B -    973956 - DSF version = 68.1.33, DSF SHRM version = 86.11
+B -    983045 - Manufacturer ID = 6, Device Type = 7
+B -    983167 - Rank 0 size = 2048 MB, Rank 1 size = 2048 MB
+B -    988169 - do_ddr_training, Start
+B -    995215 - Frequency = 1355 MHz
+D -      3660 - do_ddr_training, Delta
+B -   1008421 - magic str mismatch
+B -   1011136 - pImem Init Start
+D -      5886 - pImem Init End, Delta
+B -   1017571 - Relocate Pagetable to DDR, Start
+B -   1021353 - Relocate Pagetable to DDR, End
+B -   1025501 - External heap init, Start
+B -   1029802 - External heap init, End
+B -   1033614 - clock_init, Start
+D -       183 - clock_init, Delta
+B -   1040873 - Loading APDP Image
+D -      2684 - Image Loaded, Delta - (0 Bytes)
+B -   1046760 - usb: Serial - 48a98858
+B -   1051182 - usb: chgr -  SDP_CHARGER
+B -   1055635 - PM: SMEM Chgr Info Write Success
+B -   1058472 - alloc smem for SMEM_ID_VENDOR2 successful
+B -   1062925 - violet
+B -   1098945 - Loading OEM_MISC Image
+D -      5124 - Auth Metadata
+D -       335 - Segments hash check
+D -      9028 - Image Loaded, Delta - (8080 Bytes)
+B -   1111420 - Loading QTI_MISC Image
+D -      4514 - Image Loaded, Delta - (0 Bytes)
+B -   1123833 - PM: PM Total Mem Allocated: 1849 
+B -   1123864 - Loading AOP Image
+D -       823 - Auth Metadata
+D -      1677 - Segments hash check
+D -     15219 - Image Loaded, Delta - (155376 Bytes)
+B -   1142408 - Loading QSEE Dev Config Image
+D -       884 - Auth Metadata
+D -       610 - Segments hash check
+D -     11773 - Image Loaded, Delta - (36784 Bytes)
+B -   1157505 - Loading QSEE Image
+D -      4239 - Auth Metadata
+D -     13756 - Segments hash check
+D -     50661 - Image Loaded, Delta - (2011586 Bytes)
+B -   1211948 - Loading SEC Image
+D -      4453 - Image Loaded, Delta - (0 Bytes)
+B -   1219512 - Loading QHEE Image
+D -      1068 - Auth Metadata
+D -      2714 - Segments hash check
+D -     17507 - Image Loaded, Delta - (368056 Bytes)
+B -   1240770 - Loading STI Image
+D -      4362 - Image Loaded, Delta - (0 Bytes)
+B -   1248426 - Loading APPSBL Image
+D -      5673 - Auth Metadata
+D -     10950 - Segments hash check
+D -     35807 - Image Loaded, Delta - (2097152 Bytes)
+B -   1293444 - SBL1, End
+D -    704214 - SBL1, Delta
+S - Flash Throughput, 76000 KB/s  (4756602 Bytes,  61988 us)
+S - DDR Frequency, 1353 MHz
+
+
+UEFI Start     [ 1471] SEC
+ASLR        : ON
+DEP         : ON (RTB)
+Timer Delta : +1 mS
+RAM Entry 0 : Base 0x0000000080000000  Size 0x0000000080000000
+RAM Entry 1 : Base 0x0000000100000000  Size 0x000000007DD00000
+Continue booting UEFI on Core 0
+UEFI Ver    : 5.0.210816.BOOT.XF.3.1-00208-SM6150LZB-1
+Build Info  : 64b Aug 16 2021 14:20:20
+Boot Device : eMMC
+PROD Mode   : TRUE
+Retail      : TRUE
+SDC2 node not found in the IORT
+HW Wdog Setting from PCD : Disabled
+PM0: 40, PM2: 31, 
+1, ChargerLib:: ChargerLibTarget_GetBatteryID BATT_ID_2 = 69144 
+1, 1, QcomChargerDxe:: ChargerPlatform_Init Enabled WDOG.
+UsbConfigLibOpenProtocols: gPmicNpaClientSS2 cannot be created
+UsbConfigPortsQueryConnectionChange: UFP and Type-C
+UsbConfigPortsQueryConnectionChange: usbport->connectstate: ATT
+DisplayUtils: Setvariable returned Success
+[CheckPanel] panel reg[0xc] value: 0x00000007, uReponseSize:2
+lcd0=1,lcd1=0
+DisplayDxe: Resolution 1080x2340 (1 intf)
+ISENSE TOTAL TIME 2ms
+Disp init wait [ 2161] 
+ReadKeyInternal: gEfiSimpleTextInputExProtocolGuid handles = 3
+175, KeyPressed = 0
+195,bootstate = 0
+Render Splash  [ 2401]
+-----------------------------
+Platform Init  [ 2433] BDS
+INFO: UEFI NV tables are enabled as VOLATILE!
+UEFI Ver   : 5.0.210816.BOOT.XF.3.1-00208-SM6150LZB-1
+Platform   : IDP
+Chip Name  : SM6150
+Chip Ver   : 1.1
+-----------------------------
+2, ChargerLib:: ChargerLibTarget_GetBatteryID BATT_ID_2 = 69223 
+ChargerLib:: ChargerLib_GetBatteryID BATT_ID_2 = 69223 
+2, PmicDxe:: PmicQg_ReadBattTemp: BATT_Temp = 35 
+2, PmicDxe:: PmicQg_ReadBattTemp: BATT_Temp = 35 
+ChargerLib:: ChargerLib_GetErrors pChargingError = 0 
+2, PmicDxe:: PmicQg_ReadBattTemp: BATT_Temp = 35 
+2, 2, 2, UEFI Total : 984 ms
+POST Time      [ 2455] OS Loader
+violet Loader Build Info: Sep  8 2021 18:49:27
+smem protocol = 9A31B078
+get_boardid_from_smem, LK product name is violet
+get_boardid_from_smem, xbl product name is violet
+get board id1 is 0
+get board id2 is 0
+get board id3 is 0
+get hwlevel boardid value is 1
+get_boardid_from_smem, SUCCESS, board_id=0x101
+get_boardid_from_smem, SUCCESS, board_id_hwlevel=0x1
+get_boardid_from_smem Write Success
+VB: RWDeviceState: Succeed using rpmb!
+GetKeyPressGuid:KeyPressed = 0x0;Status:0x0
+GetKeyPressGuid::KeyPressed = (0x0)
+Reboot reason: 0
+Recovery command: 32 bootonce-bootloader
+KeyPress:0, BootReason:0
+Fastboot=0, Recovery:0
+GetVmData: making ScmCall to get HypInfo
+GetVmData: No Vm data present! Status = (0x3)
+VM Hyp calls not present
+Memory Base Address: 0x80000000
+Booting Into Mission Mode
+ReadKeyInternal: gEfiSimpleTextInputExProtocolGuid handles = 3
+175, KeyPressed = 0
+195,bootstate = 1
+var = UNLOCK ORANGE splash update
+Cannot find GraphicsHandles.
+Cannot find GraphicsHandles.
+Render Splash  [ 2620]
+UpdateRollbackSyscall: Older TZ, skipping updateInvalid vm-linux partition
+avb_slot_verify.c:481: DEBUG: Loading vbmeta struct from partition 'vbmeta'.
+Partition found: vbmeta
+avb_vbmeta_image.c:206: ERROR: Hash does not match!
+avb_slot_verify.c:541: ERROR: vbmeta: Error verifying vbmeta image: HASH_MISMATCH
+avb_slot_verify.c:703: DEBUG: vbmeta: VERIFICATION_DISABLED bit is set.
+avb_slot_verify.c:307: DEBUG: boot: Loading entire partition.
+Partition found: boot
+avb_slot_verify.c:307: DEBUG: dtbo: Loading entire partition.
+Partition found: dtbo
+State: Unlocked, AvbSlotVerify returned ERROR_VERIFICATION, continue boot
+DateSupport: 1
+VB2: Authenticate complete! boot state is: orange
+VB2: boot state: orange(1)
+Display menu is not enabled!
+Device is unlocked, Skipping boot verification
+GetVmData: making ScmCall to get HypInfo
+GetVmData: No Vm data present! Status = (0x3)
+No Ffbm cookie found, ignore: Not Found
+Memory Base Address: 0x80000000
+Decompressing kernel image start: 2889 ms
+Decompressing kernel image done: 3211 ms
+Memory Base Address: 0x80000000
+3, PONReason HARD_RESET 1 SMPL 0 RTC 0 DC_CHG 0 USB_CHG 1 PON1 0 CBLPWR 0 KPDPWR 0
+GetCheckPanelPressGuid:checkPanel = 0x1;Status:0x0
+get_hwconfig_cmdline:: cpu_id=0x16A0D9EB
+get_hwconfig_cmdline, i=0xF and hwconfig find is 1
+anton VB: readDebugPolicy: ScmSipSysCall Status: (0x7)
+Error Get DebugPolicy: Device Error
+Cmdline: console=ttyMSM0,115200n8 androidboot.hardware=qcom androidboot.console=ttyMSM0 androidboot.memcg=1 lpm_levels.sleep_disabled=1 video=vfb:640x400,bpp=32,memsize=3072000 msm_rtb.filter=0x237 service_locator.enable=1 swiotlb=1 androidboot.usbcontrol
+RAM Partitions
+Add Base: 0x0000000080000000 Available Length: 0x0000000080000000 
+Add Base: 0x0000000100000000 Available Length: 0x000000007DD00000 
+ERROR: Could not get splash memory region node
+kaslr-Seed is added to chosen node
+pureason = 40011
+
+Shutting Down UEFI Boot Services: 3540 ms
+Start EBS        [ 3540] 
+BDS: LogFs sync skipped, Unsupported
+App Log Flush : 18 ms
+Exit EBS        [ 3570] UEFI End
+
